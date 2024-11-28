@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Offcanvas, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Pomodoro from "./Pomodoro";
 
 function RightOffcanvas() {
   const [show, setShow] = useState(false);
@@ -31,7 +32,7 @@ function RightOffcanvas() {
           <Offcanvas.Title>Offcanvas from Right</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <p>This is an offcanvas sliding from the right side of the screen.</p>
+          <Pomodoro />
         </Offcanvas.Body>
       </Offcanvas>
     </div>
