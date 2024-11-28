@@ -3,6 +3,7 @@ import { GiBrain } from "react-icons/gi";
 
 import { useNavigate } from "react-router-dom";
 import Chatbot from "./Chatbot";
+import RightOffcanvas from "./OffCanvas";
 const Sidebar = () => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(true);
@@ -117,6 +118,9 @@ const Sidebar = () => {
             <GiBrain size={50} color="white" />
           </div>
         )}
+        <div>
+          <RightOffcanvas />
+        </div>
       </div>
     );
 };
