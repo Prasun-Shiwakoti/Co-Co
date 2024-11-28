@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import Fire from "../images/fire-flame.gif";
@@ -25,6 +25,9 @@ const Dashboard = () => {
     { name: "Jun", uv: 2390, pv: 3800, amt: 2500 },
     { name: "Jul", uv: 3490, pv: 4300, amt: 2100 },
   ];
+
+  const [stats, setStats] = useState([]);
+
 
   return (
     <div className="w-[80%] h-screen ">

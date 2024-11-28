@@ -13,6 +13,7 @@ import Dashboard from "./Components/Dashboard";
 import PlayQuiz from "./Components/PlayQuiz";
 import Charts from "./Components/Charts";
 import Flash from "./Components/Flash";
+import SubPages from "./Components/SubPages";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quiz/:id" element={<PlayQuiz />} />
         <Route path="/flashcards/:id" element={<FlashCards />} />
+        <Route path="/subjects/:id" element={<SubPages />} />
       </Routes>
     </div>
   );

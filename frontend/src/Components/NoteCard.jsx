@@ -14,8 +14,7 @@ const NoteCard = (props) => {
               setModal(true);
             }}
           >
-            <Card.Title>{props.subjectName}</Card.Title>
-            <Card.Text>{props.value}</Card.Text>
+            <Card.Title className="text-center">{props.subjectName}</Card.Title>
           </Card.Body>
         </Card>
       </div>
