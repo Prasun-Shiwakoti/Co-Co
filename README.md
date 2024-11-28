@@ -1,8 +1,4 @@
-# Prajñā
 
-**An interactive quiz platform built with HTML, CSS, JavaScript, and Django to enhance learning through customizable quizzes and real-time performance tracking.**
-
----
 
 ## Table of Contents
 
