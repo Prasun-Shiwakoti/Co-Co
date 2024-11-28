@@ -14,7 +14,7 @@ import Dashboard from "./Components/Dashboard";
 function App() {
 
   return (
-    <>
+    <div className="flex">
       <Sidebar />
       <Routes>
         <Route path="/subjects" element={<Subjects />} />
@@ -25,7 +25,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-    </>
+    </div>
   );
 }
 
