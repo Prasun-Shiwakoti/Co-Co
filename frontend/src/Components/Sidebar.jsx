@@ -107,8 +107,13 @@ const Sidebar = () => {
             </li>
           </ul>
         </div>
-        {
-          showChatbot ? <Chatbot close={() => setShowChatBot(false)} /> : <div className="mt-auto hover:shadow-xl hover:shadow-blue-100 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2" onClick={() => setShowChatBot(true)}>
+        {showChatbot ? (
+          <Chatbot close={() => setShowChatBot(false)} />
+        ) : (
+          <div
+            className="mt-auto hover:shadow-xl hover:shadow-blue-100 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2"
+            onClick={() => setShowChatBot(true)}
+          >
             <GiBrain size={50} color="white" />
           </div>
         )}
