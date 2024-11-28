@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button, Spinner, Alert, Card } from "react-bootstrap";
-// import upload from "../images/Group 1.png";
 
 const Subjects = () => {
   const [subjects, setSubjects] = useState([]);
@@ -93,7 +92,7 @@ const Subjects = () => {
                 <Card>
                   <Card.Img variant="top" src="holder.js/100px180" />
                   <Card.Body>
-                    <Card.Title>Card Title</Card.Title>
+                    <Card.Title className="text-center">Card Title</Card.Title>
                     <Card.Text>
                       Some quick example text to build on the card title and
                       make up the bulk of the card's content.
@@ -188,7 +187,7 @@ const Subjects = () => {
             </form>
           </Modal.Body>
 
-          <Modal.Footer className=" flex justify-end pr-10 bg-blue-100 ">
+          <Modal.Footer className="bg-slate-100 flex justify-end pr-10">
             <Button
               className="rounded-full border-none text-blue-50 bg-slate-400 hover:text-slate-400 hover:bg-blue-50"
               onClick={() => setModal(false)}

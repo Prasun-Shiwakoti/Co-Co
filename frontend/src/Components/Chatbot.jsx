@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { IoMdSend, IoMdClose } from "react-icons/io";
 
-
-
 const Chatbot = ({ close }) => {
 
     const [messages, setMessages] = useState([]);
