@@ -14,7 +14,7 @@ const Subjects = () => {
 
   useEffect(() => {
     fetchSubjects();
-  }, [subjects]);
+  }, []);
 
   const handleAddChapter = () => {
     setModal(true);
@@ -25,11 +25,12 @@ const Subjects = () => {
   const fetchSubjects = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/subjects')
+      const res = await fetch('http://10.10.11.29:8000/subject/')
       await res.json().then(response => {
-        if (response.ok) {
+        if (response.status) {
+          console.log(response)
           setSubjects(response.data);
-          setLoading(false)
+          setLoading(false);
         }
         else
           setFormError(response.message);
@@ -80,7 +81,7 @@ const Subjects = () => {
   return (
     <>
       <div className="w-[80%] h-screen relative">
-        <div className="flex-col flex items-center justify-center">
+        <div className="flex-col flex items-center justify-center m-8  ">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
@@ -91,22 +92,17 @@ const Subjects = () => {
         </div>
         {
           loading ? (<Spinner variant="primary" className="absolute left-[50%] mt-4" />) : (
-            <div>
+            <div className="flex gap-4 ">
               {subjects && subjects.map(subject => {
-                <Card>
-                  <Card.Img variant="top" src="holder.js/100px180" />
-                  <Card.Body>
-                    <Card.Title className="text-center">Card Title</Card.Title>
-                    <Card.Text>
-                      Some quick example text to build on the card title and make up the
-                      bulk of the card's content.
-                    </Card.Text>
-                    <Button variant="primary">Go somewhere</Button>
-                  </Card.Body>
-                </Card>
+                return (
+                  <Card>
+                    <Card.Body>
+                      <Card.Title className="text-center">{subject.name}</Card.Title>
+                    </Card.Body>
+                  </Card>)
               })}
               <div
-                className="m-8 flex justify-start "
+                className="flex justify-start "
               >
                 <div className="w-52 h-52 flex items-center justify-center bg-blue-100 rounded-lg shadow-md hover:shadow-lg cursor-pointer"
                   onClick={handleAddChapter}>
