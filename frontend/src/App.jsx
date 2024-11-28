@@ -13,8 +13,10 @@ function App() {
 
   return (
     <>
+      <Sidebar />
       <Routes>
         <Route path="/subjects" element={<Subjects />} />
+        <Route path="/" element={<Home />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/flashcards" element={<FlashCards />} />
         <Route path="/quiz" element={<Quiz />} />
