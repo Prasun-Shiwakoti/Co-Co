@@ -1,11 +1,12 @@
 import { useState } from "react";
 import "./App.css";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
-import Subjects from "./Components/Subjects";
-import Notes from "./Components/Notes";
-import FlashCards from "./Components/FlashCards";
-import Quiz from "./Components/Quiz";
+import { Routes, Route } from "react-router-dom";
+import Subjects from "./components/Subjects";
+import Notes from "./components/Notes";
+import FlashCards from "./components/FlashCards";
+import Quiz from "./components/Quiz";
+import Login from "./components/Login";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -17,6 +18,7 @@ function App() {
         <Route path="/notes" element={<Notes />} />
         <Route path="/flashcards" element={<FlashCards />} />
         <Route path="/quiz" element={<Quiz />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
