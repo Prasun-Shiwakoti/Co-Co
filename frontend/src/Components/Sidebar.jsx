@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { GiBrain } from "react-icons/gi";
+
 import { useNavigate } from "react-router-dom";
+import Chatbot from "./Chatbot";
 const Sidebar = () => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(true);
+  const [showChatbot, setShowChatBot] = useState(false);
 
   useEffect(() => {
     console.log(location.pathname)
@@ -100,10 +104,13 @@ const Sidebar = () => {
               </button>
             </li>
           </ul>
-          <button className="mt-auto w-3/4 hover:shadow-xl hover:shadow-blue-100  text-blue-900 bg-white hover:text-blue-900 hover:bg-blue-50 rounded-full py-2 px-4 transition  text-start  ">
-            Generate
-          </button>
         </div>
+        {
+          setShowChatBot ? <Chatbot close={() => setShowChatBot(false)} /> : <div className="mt-auto hover:shadow-xl hover:shadow-blue-100 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2" onClick={() => setShowChatBot(true)}>
+            <GiBrain size={50} color="white" />
+          </div>
+        }
+
       </div>
     );
 };
