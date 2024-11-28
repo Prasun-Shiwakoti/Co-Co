@@ -1,0 +1,18 @@
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #1e3a8a; /* blue-900 color */
+  border-radius: 50%;
+}
+
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+  color: white; /* Optional: Make arrows stand out */
+}
+
+.carousel-indicators [data-bs-target] {
+  background-color: #1e3a8a; /* blue-900 color for indicators */
+}
+
+.carousel-indicators .active {
+  background-color: #0c254b; /* A darker shade of blue-900 for the active indicator */
+}
