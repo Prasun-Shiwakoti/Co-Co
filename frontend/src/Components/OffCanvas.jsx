@@ -21,13 +21,24 @@ function RightOffcanvas() {
         onHide={handleClose}
         placement="end"
         style={{
-          height: "60vh",
-          top: "20vh",
+          height: "40vh",
+          top: "30vh",
         }}
         className="bg-blue-100 rounded-lg"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Offcanvas from Right</Offcanvas.Title>
+          <Offcanvas.Title
+            className="text-blue-900 w-100 text-center mx-auto font-bold"
+            style={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            Pomodoro
+          </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Pomodoro />
