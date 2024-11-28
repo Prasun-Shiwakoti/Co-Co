@@ -9,9 +9,9 @@ import Quiz from "./Components/Quiz";
 import Login from "./Components/Login";
 import Sidebar from "./Components/Sidebar";
 import Home from "./Components/Home";
+import Dashboard from "./Components/Dashboard";
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -23,6 +23,7 @@ function App() {
         <Route path="/flashcards" element={<FlashCards />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );
