@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student,Subject,Chapter
+from .models import Student,Subject,Chapter, Notes, Quiz, Flashcard
 
 class StudentSerializer(serializers.ModelSerializer):
     subjects = serializers.SerializerMethodField()
@@ -23,7 +23,6 @@ class SubjectSerializer(serializers.ModelSerializer):
         chapters = Chapter.objects.filter(subject=obj)
         return ChapterSerializer(chapters, many=True).data
     
-
 class ChapterSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -33,3 +32,24 @@ class ChapterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username=serializers.CharField()
     password=serializers.CharField()
+
+class NotesSerializer(serializers.ModelSerializer):
+    chapter = ChapterSerializer()  # Nested ChapterSerializer to include chapter data
+
+    class Meta:
+        model = Notes
+        fields = "__all__"
+
+class QuizSerializer(serializers.ModelSerializer):
+    chapter = ChapterSerializer()  # Nested ChapterSerializer to include chapter data
+
+    class Meta:
+        model = Quiz
+        fields = "__all__"
+
+class FlashcardSerializer(serializers.ModelSerializer):
+    chapter = ChapterSerializer()  # Nested ChapterSerializer to include chapter data
+
+    class Meta:
+        model = Flashcard
+        fields = "__all__"
