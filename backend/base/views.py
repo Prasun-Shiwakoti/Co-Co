@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Student,Subject,Chapter
-from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, ChapterSerializer
+from .models import Student,Subject,Chapter,Notes ,Quiz, Flashcard
+from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, ChapterSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
@@ -44,7 +44,6 @@ class StudentAPI(APIView):
             "status":True,
             "data":serializer.data
         })
-
 
 class LoginAPI(APIView):
     def post(self,request):
@@ -180,6 +179,229 @@ class ChapterAPI(APIView):
                 "status": False,
                 "message": "Chapter not found",
             }, status=404)
+
+class NotesAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        note_id = request.GET.get("id", None)
+        if not note_id:
+            queryset = Notes.objects.all()
+            serializer = NotesSerializer(queryset, many=True)
+            return Response({
+                "status": True,
+                "data": serializer.data,
+            })
+        else:
+            try:
+                note = Notes.objects.get(id=note_id)
+                serializer = NotesSerializer(note)
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            except Notes.DoesNotExist:
+                return Response({
+                    "status": False,
+                    "message": "Note not found",
+                }, status=404)
+
+    def post(self, request):
+        data = request.data
+        serializer = NotesSerializer(data=data)
+        if not serializer.is_valid():
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        serializer.save()
+        return Response({
+            "status": True,
+            "data": serializer.data,
+        })
+    
+    def put(self, request, pk):
+        try:
+            note = Notes.objects.get(id=pk)
+            serializer = NotesSerializer(note, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        except Notes.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Note not found",
+            }, status=404)
+
+    def delete(self, request, pk):
+        try:
+            note = Notes.objects.get(id=pk)
+            note.delete()
+            return Response({
+                "status": True,
+                "message": "Note deleted successfully",
+            })
+        except Notes.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Note not found",
+            }, status=404)
+
+class QuizAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        quiz_id = request.GET.get("id", None)
+        if not quiz_id:
+            queryset = Quiz.objects.all()
+            serializer = QuizSerializer(queryset, many=True)
+            return Response({
+                "status": True,
+                "data": serializer.data,
+            })
+        else:
+            try:
+                quiz = Quiz.objects.get(id=quiz_id)
+                serializer = QuizSerializer(quiz)
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            except Quiz.DoesNotExist:
+                return Response({
+                    "status": False,
+                    "message": "Quiz not found",
+                }, status=404)
+
+    def post(self, request):
+        data = request.data
+        serializer = QuizSerializer(data=data)
+        if not serializer.is_valid():
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        serializer.save()
+        return Response({
+            "status": True,
+            "data": serializer.data,
+        })
+    
+    def put(self, request, pk):
+        try:
+            quiz = Quiz.objects.get(id=pk)
+            serializer = QuizSerializer(quiz, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        except Quiz.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Quiz not found",
+            }, status=404)
+
+    def delete(self, request, pk):
+        try:
+            quiz = Quiz.objects.get(id=pk)
+            quiz.delete()
+            return Response({
+                "status": True,
+                "message": "Quiz deleted successfully",
+            })
+        except Quiz.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Quiz not found",
+            }, status=404)
+
+class FlashcardAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        flashcard_id = request.GET.get("id", None)
+        if not flashcard_id:
+            queryset = Flashcard.objects.all()
+            serializer = FlashcardSerializer(queryset, many=True)
+            return Response({
+                "status": True,
+                "data": serializer.data,
+            })
+        else:
+            try:
+                flashcard = Flashcard.objects.get(id=flashcard_id)
+                serializer = FlashcardSerializer(flashcard)
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            except Flashcard.DoesNotExist:
+                return Response({
+                    "status": False,
+                    "message": "Flashcard not found",
+                }, status=404)
+
+    def post(self, request):
+        data = request.data
+        serializer = FlashcardSerializer(data=data)
+        if not serializer.is_valid():
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        serializer.save()
+        return Response({
+            "status": True,
+            "data": serializer.data,
+        })
+    
+    def put(self, request, pk):
+        try:
+            flashcard = Flashcard.objects.get(id=pk)
+            serializer = FlashcardSerializer(flashcard, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "status": True,
+                    "data": serializer.data,
+                })
+            return Response({
+                "status": False,
+                "data": serializer.errors,
+            })
+        except Flashcard.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Flashcard not found",
+            }, status=404)
+
+    def delete(self, request, pk):
+        try:
+            flashcard = Flashcard.objects.get(id=pk)
+            flashcard.delete()
+            return Response({
+                "status": True,
+                "message": "Flashcard deleted successfully",
+            })
+        except Flashcard.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Flashcard not found",
+            }, status=404)
+
 
 def home(request):
     return HttpResponse("HOME PAGE")
