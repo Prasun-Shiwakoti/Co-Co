@@ -22,15 +22,21 @@ from base.models import Subject
 # Create your views here.
 @csrf_exempt
 def get_note(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         try:
-            data = json.loads(request.body)
-            context = data.get('context', '') 
-            if not context:
-                return JsonResponse({'error': 'No context provided'}, status=400)
-            else:
+            id = request.GET.get('id', None)
+            if not id:
+                return JsonResponse({'error': 'No id provided'}, status=400) 
+            try:
+                sub = Subject.objects.get(id=id)
+                pdfs = PDFText.objects.filter(subject=sub)
+                context = ""
+                for pdf in pdfs:
+                    context += pdf.text_content
                 notes = generate_notes(context)
                 return JsonResponse(notes, status=200)
+            except Exception as e:
+                return JsonResponse({'error': 'Invalid Subject Code'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -135,7 +141,7 @@ def pdf_upload(request):
             summarized_text = summarize_text(extracted_text)
         else:
             summarized_text = extracted_text
-            
+
         PDFText.objects.create(
             text_content=summarized_text,
             subject = Subject.objects.first()
