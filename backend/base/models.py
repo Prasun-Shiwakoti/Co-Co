@@ -25,40 +25,42 @@ class Student(models.Model):
     
 class Subject(models.Model):
     name = models.CharField(max_length=50)
-    code = models.CharField(max_length=10, unique=True)
+    code = models.CharField(max_length=10, unique=True, default='DEFAULT')
     user = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='subjects')
 
     def __str__(self):
         return f"{self.code}-{self.name}"
     
-class Chapter(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)  
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='chapters')
+# class Chapter(models.Model):
+#     title = models.CharField(max_length=100)
+#     description = models.TextField(blank=True, null=True)  
+#     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='chapters')
 
-    def __str__(self):
-        return f"Chapter: {self.title} (Subject: {self.subject.name})"
+#     def __str__(self):
+#         return f"Chapter: {self.title} (Subject: {self.subject.name})"
     
 class Notes(models.Model):
-    
+    code = models.CharField(max_length=10, unique=True, default='DEFAULT')
     content = models.TextField()
-    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='notes')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='notes')
 
     def __str__(self):
-        return f"Notes: {self.content[:10]} (Chapter: {self.chapter.title})"
+        return f"Notes: {self.content[:10]} (Subject: {self.subject.name}) (Code:{self.code})"
     
 class Quiz(models.Model):
+    code = models.CharField(max_length=10, unique=True, default='DEFAULT')
     questions = models.JSONField(default=dict)
-    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='quizzes')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='quizzes')
 
     def __str__(self):
-        return f"Quiz (Chapter: {self.chapter.title})"
+        return f"Quiz (Chapter: {self.subject.name})"
 
 class Flashcard(models.Model):
+    code = models.CharField(max_length=10, unique=True, default='DEFAULT')
     cards = models.JSONField(default=dict, null=True, blank=True)
-    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='flashcards')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='flashcards')
 
     def __str__(self):
-        return f"Flashcard: {self.text[:10]}... (Chapter: {self.chapter.title})"
+        return f"Flashcard: {self.cards}... (Chapter: {self.subject.name})"
     
 

@@ -2,10 +2,9 @@ from django.db import models
 from base.models import Subject
 # Create your models here.
 
-class UploadedPDF(models.Model):
-    file = models.FileField(upload_to='pdfs/')
-    text_content = models.TextField()
+class PDFText(models.Model):
+    text_content = models.TextField(null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.file.name} - {self.subject.name}"
+        return f"{self.text_content[:10]} - {self.subject.name}"
