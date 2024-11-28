@@ -23,7 +23,7 @@ def UpdateStreakAPI(func):
             today = datetime.now().date()
             last_activity_date = profile.last_activity_date
 
-            if last_activity_date != today:  # Only update streak if it's a new day
+            if last_activity_date < today:  # Only update streak if it's a new day
                 # If the user hasn't updated streak for today, reset streak if necessary
                 
                 if last_activity_date == today - timedelta(days=1):
@@ -283,7 +283,7 @@ class NotesAPI(APIView):
                 "message": "Note not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='get')
+
 class QuizAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -358,7 +358,7 @@ class QuizAPI(APIView):
                 "message": "Quiz not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='get')
+
 class FlashcardAPI(APIView):
     permission_classes = [IsAuthenticated]
 
