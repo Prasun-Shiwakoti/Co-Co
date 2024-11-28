@@ -7,14 +7,19 @@ const NoteCard = (props) => {
   return (
     <>
       <div>
-        <Card style={{ width: "18rem" }} className="bg-transparent border-none">
+        <Card
+          style={{ width: "18rem" }}
+          className="bg-transparent border-none "
+        >
           <Card.Body
-            className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden cursor-pointer "
+            className="m-8 bg-blue-100 p-4  rounded-lg h-auto  cursor-pointer shadow-xl shadow-blue-200 "
             onClick={() => {
               setModal(true);
             }}
           >
-            <Card.Title className="text-center">{props.subjectName}</Card.Title>
+            <Card.Title className="text-center text-2xl">
+              {props.subjectName}
+            </Card.Title>
           </Card.Body>
         </Card>
       </div>

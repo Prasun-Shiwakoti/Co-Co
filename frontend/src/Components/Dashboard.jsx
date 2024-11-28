@@ -29,7 +29,6 @@ const Dashboard = () => {
 
   const [stats, setStats] = useState([]);
 
-
   return (
     <div className="w-[80%] h-screen ">
       <div>
@@ -62,7 +61,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-orange-200 mt-8 shadow-xl shadow-orange-100">
+        <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-orange-200 mt-8 shadow-xl shadow-orange-100">
           <h1 className="text-4xl text-orange-600 ml-6 font-bold drop-shadow-[0_2px_2px_rgba(249,115,22,0.8)]">
             Streak:
           </h1>
@@ -70,8 +69,8 @@ const Dashboard = () => {
             0
           </h1>
           <img src={Fire} className="w-[60px]" alt="fire icon" />
-        </div> */}
-        <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-sky-200 mt-8 shadow-xl shadow-sky-100">
+        </div>
+        {/* <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-sky-200 mt-8 shadow-xl shadow-sky-100">
           <h1
             className="text-4xl text-sky-600 ml-6 font-bold drop-shadow-[0_2px_2px_rgba(135,206,235,0.8)]
 "
@@ -85,7 +84,7 @@ const Dashboard = () => {
             -
           </h1>
           <img src={Ice} className="w-[60px]" alt="fire icon" />
-        </div>
+        </div> */}
       </div>
 
       <div>
