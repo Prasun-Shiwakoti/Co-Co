@@ -10,6 +10,7 @@ import Login from "./Components/Login";
 import Sidebar from "./Components/Sidebar";
 import Home from "./Components/Home";
 import Dashboard from "./Components/Dashboard";
+import PlayQuiz from "./Components/PlayQuiz";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/quiz/:id" element={<PlayQuiz />} />
       </Routes>
     </div>
   );

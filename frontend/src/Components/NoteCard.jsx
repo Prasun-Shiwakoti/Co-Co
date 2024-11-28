@@ -17,7 +17,7 @@ const NoteCard = (props) => {
       <div>
         <Card style={{ width: "18rem" }} className="bg-transparent border-none">
           <Card.Body
-            className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden "
+            className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden cursor-pointer "
             onClick={() => {
               setModal(true);
             }}

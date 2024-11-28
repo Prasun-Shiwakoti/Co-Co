@@ -92,6 +92,19 @@ const Sidebar = () => {
             </li>
             <li>
               <button
+                className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-100 rounded-full text-start ${location.pathname === "/quiz"
+                  ? "bg-blue-900 text-blue-50"
+                  : " bg-white text-blue-900"
+                  }`}
+                onClick={() => {
+                  navigate("/quiz");
+                }}
+              >
+                Quizes
+              </button>
+            </li>
+            <li>
+              <button
                 className={`w-full py-2 px-4 border hover:shadow-xl hover hover:shadow-blue-100 rounded-full text-start ${location.pathname === "/flashcards"
                   ? "bg-blue-900 text-blue-50"
                   : " bg-white text-blue-900"
