@@ -132,7 +132,6 @@ const Subjects = () => {
           size="lg"
           show={true}
           onHide={() => setModal(false)}
-          // dialogClassName="w-[100%] h-[100vh]"
           aria-labelledby="contained-modal-title-vcenter"
           centered
           className="flex flex-col justify-center items-center max-h-screen"
