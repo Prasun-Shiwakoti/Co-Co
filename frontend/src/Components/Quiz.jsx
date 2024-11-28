@@ -9,7 +9,10 @@ const Quiz = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [quizes, setQuizes] = useState([{ subjectName: "Science", id: '123' }, { subjectName: "Maths", id: '456' }]);
+  const [quizes, setQuizes] = useState([
+    { subjectName: "Science", id: "123" },
+    { subjectName: "Maths", id: "456" },
+  ]);
 
   return (
     <div className="w-[80%]">
@@ -18,25 +21,32 @@ const Quiz = () => {
           <div className=" p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">Quizes</h1>
+              <h1 className="text-blue-900 text-2xl font-bold ml-2">
+                Quizzes{" "}
+              </h1>
             </div>
           </div>
           <hr className="border-blue-900 w-[95%] " />
         </div>
       </div>
       <div className="flex">
-        {
-          quizes.map((quiz, index) => (<Card className="bg-transparent border-none flex items-center" >
+        {quizes.map((quiz, index) => (
+          <Card
+            style={{ width: "18rem" }}
+            className="bg-transparent border-none "
+          >
             <Card.Body
-              className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden cursor-pointer "
+              className="m-8 bg-blue-100 p-4 rounded-lg h-auto cursor-pointer shadow-xl shadow-blue-200"
               onClick={() => {
-                navigate(`/quiz/${quiz.id}`)
+                navigate(`/quiz/${quiz.id}`);
               }}
             >
-              <Card.Title>{quiz.subjectName}</Card.Title>
+              <Card.Title className="text-center text-2xl">
+                {quiz.subjectName}
+              </Card.Title>
             </Card.Body>
-          </Card>))
-        }
+          </Card>
+        ))}
       </div>
     </div>
   );
