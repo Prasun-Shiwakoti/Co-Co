@@ -1,13 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import Carousel from "react-bootstrap/Carousel";
 import "./FlashCards.css";
 const FlashCards = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [flashCards, setFlashCards] = useState([{ question: 'Whats up', answer: 'nth' }, { question: 'hi', answer: 'nthdsa' }, { question: 'hellow', answer: 'nthwe' }]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const flipAnswer = () => {
     setShowAnswer(!showAnswer)
+  }
+
+  useEffect(() => {
+    fetchFlashCards();
+  }, [flashCards])
+
+  const fetchFlashCards = async () => {
+    try {
+      const res = await fetch('')
+      await data.json().then((response) => {
+        if (response.ok) {
+          setFlashCards(response.data)
+          setLoading(false)
+        }
+        else {
+          setError(response.message);
+          setTimeout(() => { setError('') })
+          setLoading(false);
+        }
+      })
+    } catch (err) {
+      setError(err)
+      setLoading(false);
+      setTimeout(() => { setError('') })
+    }
   }
 
   return (

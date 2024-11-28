@@ -3,12 +3,14 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Student,Subject,Notes ,Quiz, Flashcard
+from llm.views import get_note, get_quiz
 from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.utils.decorators import method_decorator
 from datetime import timedelta,datetime
+
 
 # Create your views here.
 
@@ -134,83 +136,10 @@ class SubjectAPI(APIView):
             "data":serializer.data
         })
 
-# class ChapterAPI(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         chapter_id = request.GET.get("id", None)
-#         if not chapter_id:
-#             queryset = Chapter.objects.all()
-#             serializer = ChapterSerializer(queryset, many=True)
-#             return Response({
-#                 "status": True,
-#                 "data": serializer.data,
-#             })
-#         else:
-#             try:
-#                 chapter = Chapter.objects.get(id=chapter_id)
-#                 serializer = ChapterSerializer(chapter)
-#                 return Response({
-#                     "status": True,
-#                     "data": serializer.data,
-#                 })
-#             except Chapter.DoesNotExist:
-#                 return Response({
-#                     "status": False,
-#                     "message": "Chapter not found",
-#                 }, status=404)
-
-#     def post(self, request):
-#         data = request.data
-#         serializer = ChapterSerializer(data=data)
-#         if not serializer.is_valid():
-#             return Response({
-#                 "status": False,
-#                 "data": serializer.errors,
-#             })
-#         serializer.save()
-#         return Response({
-#             "status": True,
-#             "data": serializer.data,
-#         })
-    
-#     def put(self, request, pk):
-#         try:
-#             chapter = Chapter.objects.get(id=pk)
-#             serializer = ChapterSerializer(chapter, data=request.data)
-#             if serializer.is_valid():
-#                 serializer.save()
-#                 return Response({
-#                     "status": True,
-#                     "data": serializer.data,
-#                 })
-#             return Response({
-#                 "status": False,
-#                 "data": serializer.errors,
-#             })
-#         except Chapter.DoesNotExist:
-#             return Response({
-#                 "status": False,
-#                 "message": "Chapter not found",
-#             }, status=404)
-
-#     def delete(self, request, pk):
-#         try:
-#             chapter = Chapter.objects.get(id=pk)
-#             chapter.delete()
-#             return Response({
-#                 "status": True,
-#                 "message": "Chapter deleted successfully",
-#             })
-#         except Chapter.DoesNotExist:
-#             return Response({
-#                 "status": False,
-#                 "message": "Chapter not found",
-#             }, status=404)
 
 @method_decorator(UpdateStreakAPI, name='dispatch')
 class NotesAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         note_id = request.GET.get("id", None)
@@ -223,16 +152,20 @@ class NotesAPI(APIView):
             })
         else:
             try:
-                note = Notes.objects.get(id=note_id)
-                serializer = NotesSerializer(note)
+                subject = Subject.objects.get(id=note_id)
+                if not subject.notes.exists():
+                    return get_note(request)
+                    
+                serializer = NotesSerializer(subject.notes.all(), many=True)
                 return Response({
                     "status": True,
                     "data": serializer.data,
                 })
-            except Notes.DoesNotExist:
+            except Subject.DoesNotExist:
+                
                 return Response({
                     "status": False,
-                    "message": "Note not found",
+                    "message": "Subject not found",
                 }, status=404)
 
     def post(self, request):

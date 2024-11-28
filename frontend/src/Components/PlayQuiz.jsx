@@ -22,6 +22,8 @@ const PlayQuiz = ({ id }) => {
       ],
     },
   ]);
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -30,9 +32,34 @@ const PlayQuiz = ({ id }) => {
 
   console.log(quiz, qn);
 
-  const fetchQuiz = () => {};
+  useEffect(() => {
+    fetchQuiz();
+  }, [quiz]);
 
-  const sendQuizResults = () => {};
+  const fetchQuiz = async () => {
+    try {
+      const res = await fetch('/', {
+
+      })
+      await res.json().then(response => {
+        if (response.ok) {
+          setQuiz(response);
+          setLoading(false);
+        }
+        else {
+          setError('Error Fetching Quiz')
+          setLoading(false);
+          setTimeout(() => { setError(''), [3000] })
+        }
+      });
+    } catch (err) {
+      setError(err);
+      setLoading(false)
+      setTimeout(() => { setError(''), [3000] })
+    }
+  };
+
+  const sendQuizResults = () => { };
 
   const checkCorrect = (bool) => {
     console.log(bool);
