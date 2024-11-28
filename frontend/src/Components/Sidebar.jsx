@@ -3,25 +3,24 @@ import { GiBrain } from "react-icons/gi";
 
 import { useNavigate } from "react-router-dom";
 import Chatbot from "./Chatbot";
+import RightOffcanvas from "./OffCanvas";
 const Sidebar = () => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(true);
   const [showChatbot, setShowChatBot] = useState(false);
 
   useEffect(() => {
-    console.log(location.pathname)
-    if (location.pathname === '/login' || location.pathname === '/')
-      visibility(false)
-    else
-      visibility(true)
-  }, [location.pathname])
+    console.log(location.pathname);
+    if (location.pathname === "/login" || location.pathname === "/")
+      visibility(false);
+    else visibility(true);
+  }, [location.pathname]);
 
   const visibility = (bool) => {
-    setVisible(bool)
-  }
-  console.log(visible)
-  if (!visible)
-    return null
+    setVisible(bool);
+  };
+  console.log(visible);
+  if (!visible) return null;
   else
     return (
       <div className="  w-[20%]  h-screen flex bg-blue-50 z-10">
@@ -54,8 +53,8 @@ const Sidebar = () => {
             <li className=" text-start">
               <button
                 className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-100  text-start ${location.pathname === "/subjects"
-                  ? "bg-blue-900 text-blue-50"
-                  : " bg-white text-blue-900"
+                    ? "bg-blue-900 text-blue-50"
+                    : " bg-white text-blue-900"
                   }`}
                 onClick={() => {
                   navigate("/subjects");
@@ -67,8 +66,8 @@ const Sidebar = () => {
             <li>
               <button
                 className={`w-full py-2 px-4 border rounded-full  hover:shadow-xl  hover:shadow-blue-100 text-start ${location.pathname === "/dashboard"
-                  ? "bg-blue-900 text-blue-50"
-                  : " bg-white text-blue-900"
+                    ? "bg-blue-900 text-blue-50"
+                    : " bg-white text-blue-900"
                   }`}
                 onClick={() => {
                   navigate("/dashboard");
@@ -80,8 +79,8 @@ const Sidebar = () => {
             <li>
               <button
                 className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-100 rounded-full text-start ${location.pathname === "/notes"
-                  ? "bg-blue-900 text-blue-50"
-                  : " bg-white text-blue-900"
+                    ? "bg-blue-900 text-blue-50"
+                    : " bg-white text-blue-900"
                   }`}
                 onClick={() => {
                   navigate("/notes");
@@ -118,12 +117,19 @@ const Sidebar = () => {
             </li>
           </ul>
         </div>
-        {
-          showChatbot ? <Chatbot close={() => setShowChatBot(false)} /> : <div className="mt-auto hover:shadow-xl hover:shadow-blue-100 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2" onClick={() => setShowChatBot(true)}>
+        {showChatbot ? (
+          <Chatbot close={() => setShowChatBot(false)} />
+        ) : (
+          <div
+            className="mt-auto hover:shadow-xl hover:shadow-blue-100 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2"
+            onClick={() => setShowChatBot(true)}
+          >
             <GiBrain size={50} color="white" />
           </div>
-        }
-
+        )}
+        <div>
+          <RightOffcanvas />
+        </div>
       </div>
     );
 };
