@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
 
@@ -11,12 +13,17 @@ const Login = () => {
 
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/login', {
+            const res = await fetch('http://10.10.11.29:8000/login/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             })
-            const data = await res.json()
+            await res.json().then((response) => {
+                setLoading(false)
+                if (response.status) {
+                    navigate('/subjects');
+                }
+            })
 
         } catch (err) {
             setError(err.message);
@@ -30,16 +37,16 @@ const Login = () => {
             <div className='bg-sky-50 p-10 rounded-md shadow-md w-[500px]'>
                 <h3 className='text-center text-blue-900 font-bold text-lg'>COCO</h3>
                 <h1 className='font-bold text-center mb-5 text-blue-900 text-4xl'>Login</h1>
-                <form className='space-y-4 flex flex-col gap-3' onSubmit={handleSubmit}>
+                <form className='space-y-4 flex flex-col gap-3'>
                     <div className='flex flex-col space-y-2'>
-                        <label className='text-lg'>Email</label>
-                        <input type='email' required className='p-2 border border-gray-300 rounded-md' value={formData.username} onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })} id='username' />
+                        <label className='text-lg'>Username</label>
+                        <input type='text' required className='p-2 border border-gray-300 rounded-md' value={formData.username} onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })} id='username' />
                     </div>
                     <div className='flex flex-col space-y-2'>
                         <label className='text-lg'>Password</label>
-                        <input type='email' required className='p-2 border border-gray-300 rounded-md' value={formData.password} onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })} id='password' />
+                        <input type='password' required className='p-2 border border-gray-300 rounded-md' value={formData.password} onChange={(e) => setFormData({ ...formData, [e.target.id]: e.target.value })} id='password' />
                     </div>
-                    <button className='bg-blue-600 w-full py-3 mt-10 rounded-full text-white hover:shadow-xl hover:shadow-blue-100' disabled={loading}>Submit</button>
+                    <button onClick={handleSubmit} className={`bg-blue-600 w-full py-3 mt-10 rounded-full text-white hover:shadow-xl hover:shadow-blue-100 cursor-pointer ${loading ? 'bg-blue-600' : 'bg-blue-200d'}`} disabled={loading} >Submit</button>
                 </form>
             </div>
         </div>
