@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import Fire from "../images/fire-flame.gif";
@@ -26,7 +26,39 @@ const Dashboard = () => {
     { name: "Jul", uv: 3490, pv: 4300, amt: 2100 },
   ];
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [stats, setStats] = useState([]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [stats])
+
+  const fetchStats = async () => {
+    setLoading(true)
+
+    try {
+      const res = await fetch('')
+      await res.json().then((response) => {
+        if (response.ok) {
+          setLoading(false)
+          setStats(response)
+        }
+        else {
+          setLoading(false)
+          setError(response.message)
+          setTimeout(() => { setError('') })
+        }
+      });
+
+    } catch (err) {
+      setLoading(false)
+      setError(err.message)
+      setTimeout(() => { setError('') })
+
+    }
+  }
 
 
   return (
