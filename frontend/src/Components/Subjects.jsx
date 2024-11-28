@@ -11,6 +11,7 @@ const Subjects = () => {
   const [modal, setModal] = useState(false);
   const [formData, setformData] = useState({ name: "", file: [] });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false)
 
 
   useEffect(() => {
@@ -38,7 +39,10 @@ const Subjects = () => {
       })
 
     } catch (err) {
-      setFormError('Error adding subject')
+      setError('Error fetching subject')
+      setTimeout(() => {
+        setError('')
+      }, [3000])
       setLoading(false);
     }
   }
@@ -77,7 +81,7 @@ const Subjects = () => {
   //loader
   return (
     <>
-      <div className="w-[80%] h-screen ">
+      <div className="w-[80%] h-screen relative">
         <div className="flex-col flex items-center justify-center">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
@@ -88,7 +92,7 @@ const Subjects = () => {
           <hr className="border-blue-900 w-[95%] " />
         </div>
         {
-          loading ? (<Spinner className="absolute left-[50%] mt-4" />) : (
+          loading ? (<Spinner variant="primary" className="absolute left-[50%] mt-4" />) : (
             <div>
               {subjects && subjects.map(subject => {
                 <Card>
@@ -118,6 +122,10 @@ const Subjects = () => {
             </div>
           )
         }
+        {error && (<div className="flex justify-center">
+          <Alert variant="danger" className="w-[70%] text-center">{error}</Alert>
+        </div>)}
+
       </div>
       {modal && (
         <Modal
