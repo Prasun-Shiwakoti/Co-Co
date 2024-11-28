@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Student,Subject,Chapter,Notes ,Quiz, Flashcard
-from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, ChapterSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
+from .models import Student,Subject,Notes ,Quiz, Flashcard
+from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
@@ -134,81 +134,81 @@ class SubjectAPI(APIView):
             "data":serializer.data
         })
 
-class ChapterAPI(APIView):
-    permission_classes = [IsAuthenticated]
+# class ChapterAPI(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        chapter_id = request.GET.get("id", None)
-        if not chapter_id:
-            queryset = Chapter.objects.all()
-            serializer = ChapterSerializer(queryset, many=True)
-            return Response({
-                "status": True,
-                "data": serializer.data,
-            })
-        else:
-            try:
-                chapter = Chapter.objects.get(id=chapter_id)
-                serializer = ChapterSerializer(chapter)
-                return Response({
-                    "status": True,
-                    "data": serializer.data,
-                })
-            except Chapter.DoesNotExist:
-                return Response({
-                    "status": False,
-                    "message": "Chapter not found",
-                }, status=404)
+#     def get(self, request):
+#         chapter_id = request.GET.get("id", None)
+#         if not chapter_id:
+#             queryset = Chapter.objects.all()
+#             serializer = ChapterSerializer(queryset, many=True)
+#             return Response({
+#                 "status": True,
+#                 "data": serializer.data,
+#             })
+#         else:
+#             try:
+#                 chapter = Chapter.objects.get(id=chapter_id)
+#                 serializer = ChapterSerializer(chapter)
+#                 return Response({
+#                     "status": True,
+#                     "data": serializer.data,
+#                 })
+#             except Chapter.DoesNotExist:
+#                 return Response({
+#                     "status": False,
+#                     "message": "Chapter not found",
+#                 }, status=404)
 
-    def post(self, request):
-        data = request.data
-        serializer = ChapterSerializer(data=data)
-        if not serializer.is_valid():
-            return Response({
-                "status": False,
-                "data": serializer.errors,
-            })
-        serializer.save()
-        return Response({
-            "status": True,
-            "data": serializer.data,
-        })
+#     def post(self, request):
+#         data = request.data
+#         serializer = ChapterSerializer(data=data)
+#         if not serializer.is_valid():
+#             return Response({
+#                 "status": False,
+#                 "data": serializer.errors,
+#             })
+#         serializer.save()
+#         return Response({
+#             "status": True,
+#             "data": serializer.data,
+#         })
     
-    def put(self, request, pk):
-        try:
-            chapter = Chapter.objects.get(id=pk)
-            serializer = ChapterSerializer(chapter, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({
-                    "status": True,
-                    "data": serializer.data,
-                })
-            return Response({
-                "status": False,
-                "data": serializer.errors,
-            })
-        except Chapter.DoesNotExist:
-            return Response({
-                "status": False,
-                "message": "Chapter not found",
-            }, status=404)
+#     def put(self, request, pk):
+#         try:
+#             chapter = Chapter.objects.get(id=pk)
+#             serializer = ChapterSerializer(chapter, data=request.data)
+#             if serializer.is_valid():
+#                 serializer.save()
+#                 return Response({
+#                     "status": True,
+#                     "data": serializer.data,
+#                 })
+#             return Response({
+#                 "status": False,
+#                 "data": serializer.errors,
+#             })
+#         except Chapter.DoesNotExist:
+#             return Response({
+#                 "status": False,
+#                 "message": "Chapter not found",
+#             }, status=404)
 
-    def delete(self, request, pk):
-        try:
-            chapter = Chapter.objects.get(id=pk)
-            chapter.delete()
-            return Response({
-                "status": True,
-                "message": "Chapter deleted successfully",
-            })
-        except Chapter.DoesNotExist:
-            return Response({
-                "status": False,
-                "message": "Chapter not found",
-            }, status=404)
+#     def delete(self, request, pk):
+#         try:
+#             chapter = Chapter.objects.get(id=pk)
+#             chapter.delete()
+#             return Response({
+#                 "status": True,
+#                 "message": "Chapter deleted successfully",
+#             })
+#         except Chapter.DoesNotExist:
+#             return Response({
+#                 "status": False,
+#                 "message": "Chapter not found",
+#             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='get')
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class NotesAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -283,7 +283,7 @@ class NotesAPI(APIView):
                 "message": "Note not found",
             }, status=404)
 
-
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class QuizAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -358,7 +358,7 @@ class QuizAPI(APIView):
                 "message": "Quiz not found",
             }, status=404)
 
-
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class FlashcardAPI(APIView):
     permission_classes = [IsAuthenticated]
 
