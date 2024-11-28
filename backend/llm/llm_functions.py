@@ -1,15 +1,35 @@
 from huggingface_hub import InferenceClient
+import json
+import json_repair
+from json_repair import repair_json
+import re
 
-client = InferenceClient(api_key="hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+client = InferenceClient(api_key="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")
 
-messages = [
-	{
-		"role": "user",
-		"content": "What is the capital of France?"
-	}
-]
+def remove_special_sequences(input_string):
+    # Replace special escape sequences with a single space
+    input_string = re.sub(r'\s+', ' ', input_string).strip()
+    special_sequences = [r'\n', r'\t', r'\r', r'\v', r'\a', '\n', '\t', '\r', '\v', '\a']
+    for sequence in special_sequences:
+        input_string = input_string.replace(sequence, '')
+    return input_string
 
-def callAPI(messages, model="meta-llama/Llama-3.2-3B-Instruct", max_tokens=200, temperature=0.7):
+def parse_json_garbage(s):
+    cleaned_s = remove_special_sequences(s)
+    parsed_s = cleaned_s[next(idx for idx, c in enumerate(s) if c in "{["):]
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError as e:
+        print("\n\n\nThis was the string:", parsed_s)
+        print("\n\n\nThis was the error:", e)
+        repaird_s = repair_json(parsed_s)
+        print("\n\n\nThis was the repaired string:", json.loads(repaird_s))
+        try:
+            return json_repair.loads(repaird_s)
+        except:
+            raise Exception
+
+def callAPI(messages, model="meta-llama/Llama-3.2-3B-Instruct", max_tokens=500, temperature=0.7):
     completion = client.chat.completions.create(
         model=model, 
         messages=messages, 
@@ -18,12 +38,6 @@ def callAPI(messages, model="meta-llama/Llama-3.2-3B-Instruct", max_tokens=200, 
     )
     return completion
 
-
-completion = client.chat.completions.create(
-    model="meta-llama/Llama-3.2-3B-Instruct", 
-	messages=messages, 
-	max_tokens=500
-)
 
 def generate_notes(context):
     notes_messages =  [
@@ -48,7 +62,13 @@ def generate_notes(context):
     ]
 
     notes = callAPI(notes_messages)
-    return notes
+    try:
+        notes_json = parse_json_garbage(notes.choices[0].message.content)
+    except:
+        notes_messages += "\nRequirement: Strictly follow the JSON format"
+        notes = callAPI(notes_messages)
+        notes_json = parse_json_garbage(notes.choices[0].message.content)
+    return notes_json
 
 
 def generate_quiz(context):
@@ -74,7 +94,15 @@ def generate_quiz(context):
     ]
 
     questions = callAPI(quiz_messages)
-    return questions
+    for _ in range(3):
+        try:
+            quiz_json = parse_json_garbage(questions.choices[0].message.content)
+            break
+        except:
+            quiz_messages += "\nRequirement: Strictly follow the JSON format"
+            quiz_messages = callAPI(quiz_messages)
+            quiz_json = parse_json_garbage(quiz_messages.choices[0].message.content)
+    return quiz_json
 
 
 def generate_flashcard(context):
@@ -88,7 +116,7 @@ def generate_flashcard(context):
             3. Always respond in JSON format:
                 {"flashcards":["information1", "information2", "information3", ...]}
             4. Output only the JSON. Do not include any additional explanation, headers, or text.
-            5. Double-check the correctness of json format before submitting.
+            5. Double-check and validate the correctness of json format before submitting.
             """
         },
         {
@@ -100,7 +128,15 @@ def generate_flashcard(context):
     ]
 
     flashcards = callAPI(flashcards_messages)
-    return flashcards
+    for _ in range(3):
+        try:
+            flashcards_json = parse_json_garbage(flashcards.choices[0].message.content)
+            break
+        except:
+            flashcards_messages += "\nRequirement: Strictly follow the JSON format"
+            flashcards = callAPI(flashcards_messages)
+    
+    return flashcards_json
 
 
 def generate_chat(context, prompt):
@@ -117,9 +153,6 @@ def generate_chat(context, prompt):
         }
     ]
     completion = callAPI(messages)
-    return completion
+    response = completion.choices[0].message.content
+    return response
 
-
-
-
-# print(completion.choices[0].message)

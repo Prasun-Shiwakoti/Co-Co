@@ -18,7 +18,7 @@ const FlashCards = () => {
         <hr className="border-blue-900 w-[95%]" />
       </div>
 
-      <Carousel className=" h-[80vh] flex items-center">
+      <Carousel className=" h-[80vh] flex items-center" interval={null}>
         <Carousel.Item>
           <div className="flex items-center justify-center h-full">
             <div className="flashcard p-6 bg-blue-200 text-center rounded-lg w-[80%] max-w-[800px]">

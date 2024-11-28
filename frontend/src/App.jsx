@@ -10,14 +10,15 @@ import Login from "./Components/Login";
 import Sidebar from "./Components/Sidebar";
 import Home from "./Components/Home";
 import Dashboard from "./Components/Dashboard";
+import Charts from "./Components/Charts";
 
 function App() {
-
   return (
     <div className="flex">
       <Sidebar />
       <Routes>
         <Route path="/subjects" element={<Subjects />} />
+        <Route path="/charts" element={<Charts />} />
         <Route path="/" element={<Home />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/flashcards" element={<FlashCards />} />
