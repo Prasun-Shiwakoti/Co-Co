@@ -101,21 +101,21 @@ const Countdown = ({ time, statusChange, toContinue, isWorking }) => {
       <div className="text-[2vw] title text-white flex gap-[50px]">
         {!(start ^ pause) ? (
           <button
-            className="p-2 text-lg  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md "
+            className="p-3 text-xl  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md "
             onClick={handleStart}
           >
             Start
           </button>
         ) : (
           <button
-            className="p-2 text-lg  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md  "
+            className="p-3 text-xl  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md  "
             onClick={handlePause}
           >
             Pause
           </button>
         )}
         <button
-          className="p-2 text-lg  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md "
+          className="p-3 text-xl  border-none rounded-lg bg-blue-100 text-blue-900 text-center drop-shadow-md "
           onClick={handleReset}
         >
           Reset
