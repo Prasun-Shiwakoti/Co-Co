@@ -1,8 +1,7 @@
 import React from "react";
 import { FaUser } from "react-icons/fa";
 import Carousel from "react-bootstrap/Carousel";
-import "./FlashCards.css"; // Import custom CSS
-
+import "./FlashCards.css";
 const FlashCards = () => {
   return (
     <div className="w-[80%] mx-auto">

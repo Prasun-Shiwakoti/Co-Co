@@ -6,14 +6,6 @@ const NoteCard = (props) => {
   const [modal, setModal] = useState(false);
   return (
     <>
-      {/* <div
-        className="w-1/5 m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden "
-        onClick={() => {
-          setModal(true);
-        }}
-      >
-        <p className="text-blue-900">{props.value}</p>
-      </div> */}
       <div>
         <Card style={{ width: "18rem" }} className="bg-transparent border-none">
           <Card.Body
