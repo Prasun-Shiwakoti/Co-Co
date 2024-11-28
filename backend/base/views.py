@@ -7,9 +7,37 @@ from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, 
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-
+from django.utils.decorators import method_decorator
+from datetime import timedelta,datetime
 
 # Create your views here.
+
+def UpdateStreakAPI(func): 
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated:
+            
+            # Get or create the user's profile
+            profile= Student.objects.get(user=user)
+            # Get today's date and check the last streak update date
+            today = datetime.now().date()
+            last_activity_date = profile.last_activity_date
+
+            if last_activity_date != today:  # Only update streak if it's a new day
+                # If the user hasn't updated streak for today, reset streak if necessary
+                
+                if last_activity_date == today - timedelta(days=1):
+                    profile.streak_count = 1  # Reset streak if it's not consecutive days
+                else:
+                    profile.streak_count += 1  # Increment streak for consecutive days
+                
+                # profile.last_activity_date = today
+                profile.save()
+
+        # Call the original view function
+        print("Function: ", func)
+        return func(request, *args, **kwargs)
+    return wrapper
 
 class StudentAPI(APIView):
     permission_classes=[IsAuthenticated]
@@ -180,6 +208,7 @@ class ChapterAPI(APIView):
                 "message": "Chapter not found",
             }, status=404)
 
+@method_decorator(UpdateStreakAPI, name='get')
 class NotesAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -254,6 +283,7 @@ class NotesAPI(APIView):
                 "message": "Note not found",
             }, status=404)
 
+@method_decorator(UpdateStreakAPI, name='get')
 class QuizAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -328,6 +358,7 @@ class QuizAPI(APIView):
                 "message": "Quiz not found",
             }, status=404)
 
+@method_decorator(UpdateStreakAPI, name='get')
 class FlashcardAPI(APIView):
     permission_classes = [IsAuthenticated]
 
