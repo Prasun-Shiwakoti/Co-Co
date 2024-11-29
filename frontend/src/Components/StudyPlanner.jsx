@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
-import { Alert, Spinner } from "react-bootstrap"
+
 const StudyPlanner = () => {
   const [studyPlan, setStudyPlan] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,34 @@ const StudyPlanner = () => {
     }
   }
 
+  const backendData = [
+    [
+      { sub: "History", duration: 3.05 },
+      { sub: "Math", duration: 2.05 },
+      { sub: "Science", duration: 1.86 },
+    ],
+    [
+      { sub: "Math", duration: 2.57 },
+      { sub: "Math", duration: 1.2 },
+    ],
+    [
+      { sub: "History", duration: 1.4 },
+      { sub: "English", duration: 2.26 },
+    ],
+    [
+      { sub: "History", duration: 2.74 },
+      { sub: "Geography", duration: 2.26 },
+    ],
+    [
+      { sub: "Geography", duration: 2.53 },
+      { sub: "Math", duration: 2.47 },
+    ],
+    [
+      { sub: "Math", duration: 3.31 },
+      { sub: "Science", duration: 1.69 },
+    ],
+    [{ sub: "Science", duration: 5 }],
+  ];
   return (
     <div className="w-[80%]">
       <div>
@@ -45,18 +73,7 @@ const StudyPlanner = () => {
           <hr className="border-blue-900 w-[95%] " />
         </div>
       </div>
-      <div className="m-8">
-        {
-          loading ? (<Spinner />) : studyPlan ? (<div>
-            <p>No Study Plan Yet</p>
-            <button>Generate</button>
-          </div>) : <div>
-
-          </div>
-        }
-        {error && <Alert variant="danger">{error}</Alert>}
-
-      </div>
+      <div></div>
     </div>
   );
 };
