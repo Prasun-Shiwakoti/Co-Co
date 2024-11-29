@@ -11,6 +11,7 @@ const Subjects = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSubjects();
@@ -95,10 +96,10 @@ const Subjects = () => {
             {
               subjects.map((subject) => {
                 return (
-
                   <div className="m-8 flex justify-start w-16">
                     <div
                       className=" ml-8 flex justify-start bg-blue-100 p-4 rounded-md cursor-pointer"
+                      onClick={() => navigate(`/subjects/${subject.id}`)}
                     >
                       <div className="text-blue-900 text-4xl flex items-center">
                         <p className="text-auto">{subject.name}</p>

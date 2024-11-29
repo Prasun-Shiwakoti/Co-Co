@@ -5,11 +5,36 @@ import NoteCard from "./NoteCard";
 import Card from "react-bootstrap/Card";
 
 const SubPages = () => {
-  const [note, setNote] = useState([
-    { value: "sdsahjdgsajkdask", subjectName: "Science" },
-  ]);
+  const [note, setNote] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
+  const token = localStorage.getItem('token')
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const fetchNotes = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:3001/notes/${id}`, {
+        method: "GET",
+        headers: { "authorization": `token ${token}` }
+      })
+      const response = await res.json();
+      if (response.status) {
+        console.log(response);
+        setNote(response.data);
+        setLoading(false);
+      } else {
+        setError(response.message)
+        setLoading(false)
+      }
+    } catch (err) {
+      setLoading(false)
+
+      setError('Error Fetching Notes');
+    }
+  }
+
 
   return (
     <div className="w-[80%] h-screen relative">
@@ -24,10 +49,10 @@ const SubPages = () => {
       </div>
       <div className="flex justify-between items-start">
         <div className="m-8 flex-row flex gap-5 w-[100%]">
-          {/* Iterate over the note array to render NoteCard components */}
-          {note.map((n, index) => (
-            <NoteCard key={index} value={n.value} subjectName={n.subjectName} />
-          ))}
+
+          {/* Note */}
+
+          <NoteCard subjectName={'Note'} value />
 
           {/* Flashcard */}
           <Card style={{ width: "18rem" }} className="border-none">

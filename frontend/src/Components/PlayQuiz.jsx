@@ -1,27 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
-const PlayQuiz = ({ id }) => {
-  const [quiz, setQuiz] = useState([
-    {
-      question: "What is the capital of France?",
-      options: [
-        { id: 1, text: "Berlin", isCorrect: false },
-        { id: 2, text: "Madrid", isCorrect: false },
-        { id: 3, text: "Paris", isCorrect: true },
-        { id: 4, text: "Rome", isCorrect: false },
-      ],
-    },
-    {
-      question: "What is the capital of Nepal?",
-      options: [
-        { id: 1, text: "Berlin", isCorrect: false },
-        { id: 2, text: "Madrid", isCorrect: false },
-        { id: 3, text: "Paris", isCorrect: true },
-        { id: 4, text: "Rome", isCorrect: false },
-      ],
-    },
-  ]);
+const PlayQuiz = () => {
+  const [quiz, setQuiz] = useState([]);
 
 
   const [loading, setLoading] = useState(false);
@@ -29,6 +11,8 @@ const PlayQuiz = ({ id }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentScore, setCurrentScore] = useState(0);
   const qn = quiz[currentQuestion];
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
 
   console.log(quiz, qn);
 
@@ -38,8 +22,8 @@ const PlayQuiz = ({ id }) => {
 
   const fetchQuiz = async () => {
     try {
-      const res = await fetch('/', {
-
+      const res = await fetch(`http://10.10.11.29:8000/llm/generate_quiz?id=${id}`, {
+        headers: { "authorization": `token ${token}` }
       })
       await res.json().then(response => {
         if (response.ok) {

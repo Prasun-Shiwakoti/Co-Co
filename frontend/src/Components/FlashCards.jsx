@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import Carousel from "react-bootstrap/Carousel";
+import { useParams } from "react-router-dom";
+
 import "./FlashCards.css";
 const FlashCards = () => {
   const [showAnswer, setShowAnswer] = useState(false);
-  const [flashCards, setFlashCards] = useState([{ question: 'Whats up', answer: 'nth' }, { question: 'hi', answer: 'nthdsa' }, { question: 'hellow', answer: 'nthwe' }]);
+  const [flashCards, setFlashCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { id } = useParams();
+  const token = localStorage.getItem("token");
+
 
   const flipAnswer = () => {
     setShowAnswer(!showAnswer)
@@ -18,9 +23,14 @@ const FlashCards = () => {
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch('')
+      const res = await fetch(`http://10.10.11.29:8000/flashcard?id=${id}`, {
+        method: 'GET',
+        headers: {
+          "authentication": `token ${token}`
+        }
+      })
       await data.json().then((response) => {
-        if (response.ok) {
+        if (response.status) {
           setFlashCards(response.data)
           setLoading(false)
         }

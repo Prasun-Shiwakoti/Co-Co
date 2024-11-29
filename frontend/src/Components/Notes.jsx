@@ -3,33 +3,37 @@ import { FaUser } from "react-icons/fa";
 import NoteCard from "./NoteCard";
 import { Spinner } from "react-bootstrap";
 
+
 const Notes = () => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [notesList, setNotesList] = useState();
+  const [notesList, setNotesList] = useState([]);
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     fetchNotesList();
-  }, [notesList])
+  }, [])
 
   const fetchNotesList = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/dsad', {
+      const res = await fetch('http://10.10.11.29:8000/note/', {
         method: 'GET',
+        headers: { "authorization": `token ${token}` }
       })
-      await res.json().then(response => {
-        if (response.ok) {
-          setNotesList(response.data);
-          setLoading(false);
-        }
-        else {
-          setLoading(false);
-          setError(response.message);
-          setTimeout(() => setError(''), [3000])
-        }
-      });
+      const response = await res.json();
+
+      if (response.status) {
+        console.log(response)
+        setNotesList(response.data);
+        setLoading(false);
+      }
+      else {
+        setLoading(false);
+        setError(response.message);
+        setTimeout(() => setError(''), [3000])
+      }
     }
     catch (err) {
       setError('Error Fetching Notes');
@@ -52,14 +56,16 @@ const Notes = () => {
       </div>
       {
         loading ? (<Spinner variant="primary" className="absolute left-[50%] mt-4" />) : (<div className="flex">
-          {
+          {notesList.length === 0 ? (<div>
+            <h1 className="m-8 text-2xl text-center text-gray-600">No Notes Found</h1>
+          </div>) :
             notesList?.map((note) => {
               return (
                 <NoteCard
                   value={
-                    note.text
+                    note.content
                   }
-                  subjectName={note.subject}
+                  subjectName={note.subject.name}
                 />
               )
             })
