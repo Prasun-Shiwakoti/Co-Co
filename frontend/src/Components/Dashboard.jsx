@@ -103,7 +103,7 @@ const Dashboard = () => {
           <h1 className="text-4xl text-orange-600 font-bold drop-shadow-[0_2px_2px_rgba(249,115,22,0.8)]">
             0
           </h1>
-          <img src={Fire} className="w-[60px]" alt="fire icon" />
+          <img src={Fire} className="w-[60px] mb-3" alt="fire icon" />
         </div>
         {/* <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-sky-200 mt-8 shadow-xl shadow-sky-100">
           <h1
