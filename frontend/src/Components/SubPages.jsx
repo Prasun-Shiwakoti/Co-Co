@@ -78,8 +78,8 @@ const SubPages = () => {
       });
 
       const result = await response.json();
-
-      if (response.ok) {
+      console.log(result);
+      if (result.ok) {
         setMessage("File uploaded successfully!");
         setFile(null);
       } else {
