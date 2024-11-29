@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Countdown from "./Countdown";
 import ringing from "../resources/ringing.mp3";
 import { useLocation } from "react-router-dom";
-// import "./timer.css";
 
 const Pomodoro = () => {
 
