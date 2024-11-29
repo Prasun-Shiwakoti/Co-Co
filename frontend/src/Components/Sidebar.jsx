@@ -120,6 +120,20 @@ const Sidebar = () => {
                 FlashCards
               </button>
             </li>
+            <li className=" text-start">
+              <button
+                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${
+                  location.pathname === "/planner"
+                    ? "bg-blue-900 text-blue-50"
+                    : " bg-white text-blue-900"
+                }`}
+                onClick={() => {
+                  navigate("/planner");
+                }}
+              >
+                Study-Planner
+              </button>
+            </li>
           </ul>
         </div>
         {showChatbot ? (
