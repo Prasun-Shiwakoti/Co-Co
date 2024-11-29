@@ -15,8 +15,24 @@ const Pomodoro = () => {
     buzzer.play();
     if (restTime) {
       console.log("callback");
+      if (isWorking) {
+        sendSessionTime();
+      }
       setIsWorking(!isWorking);
       setToContinue(true);
+    }
+  }
+
+  const sendSessionTime = async () => {
+    try {
+      const res = await fetch(`http://10.10.11.29:8000/add_session_time/`, {
+        method: "POST",
+        headers: { "authorization": `token ${token}`, "Content-Type": "application/json", },
+        body: JSON.stringify({ "session_time": 25 })
+      })
+
+    } catch (err) {
+      console.log(err)
     }
   }
   return (

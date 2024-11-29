@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { Alert, Spinner } from "react-bootstrap";
 import { SlCalender } from "react-icons/sl";
+import Planner from "./Planner";
 const StudyPlanner = () => {
-  const [studyPlan, setStudyPlan] = useState(null);
+  const [studyPlan, setStudyPlan] = useState([]);
+  const [showStudyPlan, setShowStudyPlan] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     daysBeforeExam: 0,
     subjects: [],
@@ -51,6 +54,7 @@ const StudyPlanner = () => {
       daysBeforeExam: daysBeforeExam,
       subjects: subjectData,
     };
+    console.log(data)
 
     // Update the formData state
     setFormData(data);
@@ -62,6 +66,8 @@ const StudyPlanner = () => {
       body: JSON.stringify(data),
     })
     const response = await res.json();
+    setStudyPlan(response.data)
+    setShowStudyPlan(true);
     console.log(response);
   };
 
@@ -106,140 +112,131 @@ const StudyPlanner = () => {
           <hr className="border-blue-900 w-[95%]" />
         </div>
       </div>
-      <div
-        className="max-w-xl m-8 mx-auto p-6 border border-gray-300 rounded-lg shadow-lg text-blue-900 max-h-[75vh] overflow-y-auto"
-        style={{
-          scrollbarWidth: "thin", // For Firefox
-          WebkitScrollbar: {
-            width: "8px", // For Webkit Browsers (e.g., Chrome)
-          },
-          WebkitScrollbarThumb: {
-            backgroundColor: "#1E3A8A", // blue-900
-          },
-        }}
-      >
-        <h2 className="text-2xl font-semibold text-center mb-4">
-          Study Planner
-        </h2>
+      {
+        !showStudyPlan ?
+          (<div
+            className="max-w-xl m-8 mx-auto p-6 border border-gray-300 rounded-lg shadow-lg text-blue-900 max-h-[75vh] overflow-y-auto"
+            style={{
+              scrollbarWidth: "thin", // For Firefox
+              WebkitScrollbar: {
+                width: "8px", // For Webkit Browsers (e.g., Chrome)
+              },
+              WebkitScrollbarThumb: {
+                backgroundColor: "#1E3A8A", // blue-900
+              },
+            }}
+          >
+            <h2 className="text-2xl font-semibold text-center mb-4">
+              Study Planner
+            </h2>
 
-        <form onSubmit={handleSubmit} className="">
-          {/* Days Before Exam */}
-          <div className="mb-4">
-            <label
-              htmlFor="daysBeforeExam"
-              className="block text-sm font-medium mb-2"
-            >
-              Days Before Exam
-            </label>
-            <input
-              type="number"
-              id="daysBeforeExam"
-              min="1"
-              value={daysBeforeExam}
-              onChange={(e) => setDaysBeforeExam(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-
-          {/* Subjects */}
-          {subjects.map((subject, index) => (
-            <div key={index} className="mb-4 border-b pb-4">
-              <div className="flex justify-between items-center mb-2">
+            <form onSubmit={handleSubmit} className="">
+              {/* Days Before Exam */}
+              <div className="mb-4">
                 <label
-                  htmlFor={`subject-${index}`}
-                  className="block text-sm font-medium"
+                  htmlFor="daysBeforeExam"
+                  className="block text-sm font-medium mb-2"
                 >
-                  Subject {index + 1}
+                  Days Before Exam
                 </label>
-                {subjects.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSubject(index)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-
-              {/* Subject Name */}
-              <input
-                type="text"
-                id={`subject-${index}`}
-                placeholder="Subject Name"
-                value={subject.name}
-                required
-                onChange={(e) =>
-                  handleSubjectChange(index, "name", e.target.value)
-                }
-                className="w-full p-2 border border-gray-300 rounded-md mb-2"
-              />
-
-              {/* Priority Slider */}
-              <label
-                htmlFor={`priority-${index}`}
-                className="block text-sm font-medium mb-1"
-              >
-                Priority (1 - 100)
-              </label>
-              <div className="flex items-center mb-2">
                 <input
-                  type="range"
-                  id={`priority-${index}`}
+                  type="number"
+                  id="daysBeforeExam"
                   min="1"
-                  max="100"
-                  value={subject.priority}
-                  onChange={(e) =>
-                    handleSubjectChange(index, "priority", e.target.value)
-                  }
-                  className="w-full"
+                  value={daysBeforeExam}
+                  onChange={(e) => setDaysBeforeExam(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 />
-                <span className="ml-2 text-sm font-medium">
-                  {subject.priority}
-                </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span>1</span>
-                <span>100</span>
+
+              {/* Subjects */}
+              {subjects.map((subject, index) => (
+                <div key={index} className="mb-4 border-b pb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <label
+                      htmlFor={`subject-${index}`}
+                      className="block text-sm font-medium"
+                    >
+                      Subject {index + 1}
+                    </label>
+                    {subjects.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSubject(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Subject Name */}
+                  <input
+                    type="text"
+                    id={`subject-${index}`}
+                    placeholder="Subject Name"
+                    value={subject.name}
+                    required
+                    onChange={(e) =>
+                      handleSubjectChange(index, "name", e.target.value)
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md mb-2"
+                  />
+
+                  {/* Priority Slider */}
+                  <label
+                    htmlFor={`priority-${index}`}
+                    className="block text-sm font-medium mb-1"
+                  >
+                    Priority (1 - 100)
+                  </label>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="range"
+                      id={`priority-${index}`}
+                      min="1"
+                      max="100"
+                      value={subject.priority}
+                      onChange={(e) =>
+                        handleSubjectChange(index, "priority", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                    <span className="ml-2 text-sm font-medium">
+                      {subject.priority}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>1</span>
+                    <span>100</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add Another Subject */}
+              <div className="mb-4">
+                <button
+                  type="button"
+                  onClick={handleAddSubject}
+                  className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Add Another Subject
+                </button>
               </div>
-            </div>
-          ))}
 
-          {/* Add Another Subject */}
-          <div className="mb-4">
-            <button
-              type="button"
-              onClick={handleAddSubject}
-              className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              Add Another Subject
-            </button>
-          </div>
+              {/* Submit Button */}
+              <div className="mb-4">
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>) : (<Planner weekData={studyPlan} />)
+      }
 
-          {/* Submit Button */}
-          <div className="mb-4">
-            <button
-              type="submit"
-              className="w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div className="m-8">
-        {loading ? (
-          <Spinner />
-        ) : studyPlan ? (
-          <div>
-            <p>No Study Plan Yet</p>
-            <button>Generate</button>
-          </div>
-        ) : (
-          <div></div>
-        )}
-      </div>
     </div>
   );
 };
