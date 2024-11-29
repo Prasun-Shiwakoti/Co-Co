@@ -13,5 +13,6 @@ urlpatterns=[
     path("quiz/",QuizAPI.as_view()),
     path("flashcard/",FlashcardAPI.as_view()), 
     path("quiz_report/", QuizReportAPI.as_view()),
-    path('generate_study_plan/', views.generate_study_plan, name='generate_study_plan'),
+    path('generate_study_plan/', views.generate_study_plan_api, name='generate_study_plan'),
+    path('add_session_time/', views.SessionTimeAPI.as_view(), name='add_session_time'),
 ]

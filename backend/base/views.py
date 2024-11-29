@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Student,Subject,Notes ,Quiz, Flashcard
@@ -467,23 +467,12 @@ class QuizReportAPI(APIView):
         user_stats = student_obj.stats or {"streak": 0, "session_time": {}, "avg_quiz_score": {}}
         
         # --- Update streak ---
-        streak = user_stats.get("streak", 0)
         avg_quiz_score = user_stats.get("avg_quiz_score", {})
 
         # Check the last quiz date
         if avg_quiz_score:
             last_quiz_date = max(avg_quiz_score.keys())
             last_quiz_date_obj = datetime.strptime(last_quiz_date, "%Y-%m-%d")
-
-            # Increment streak if the quiz is taken on the next day
-            if (last_quiz_date_obj + timedelta(days=1)).strftime("%Y-%m-%d") == today:
-                streak += 1
-            else:
-                streak = 1  # Reset streak
-        else:
-            streak = 1  # First quiz attempt
-
-        user_stats["streak"] = streak
 
         # --- Update average quiz score ---
         if today not in avg_quiz_score:
@@ -506,6 +495,50 @@ class QuizReportAPI(APIView):
             "message": "Quiz stats updated successfully",
             "stats": user_stats,
         }, status=200)
+
+@method_decorator(UpdateStreakAPI, name='dispatch')
+class SessionTimeAPI(APIView):
+    def post(self, request):
+        data = request.data
+        try:
+            student_obj = Student.objects.get(user=request.user)
+            data["user"] = student_obj.id
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
+        
+        # Get the quiz score and current date
+        session_time = data.get("session_time", 0)
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        # Get user stats
+        user_stats = student_obj.stats or {"streak": 0, "session_time": {}, "avg_quiz_score": {}}
+        
+        # --- Update streak ---
+        session_time_json = user_stats.get("session_time", {})
+        # Check the last quiz date
+
+        # --- Update average quiz score ---
+        if today not in session_time_json:
+            # Initialize today's score stats
+            session_time_json[today] = session_time
+        else:
+            session_time_json[today] += session_time
+        
+        user_stats["session_time"] = session_time
+        print(user_stats)
+        # --- Save updated stats back to the database ---
+        student_obj.stats = user_stats
+        student_obj.save()
+        print("Saved")
+        return Response({
+            "status": True,
+            "message": "Quiz stats updated successfully",
+            "stats": user_stats,
+        }, status=200)
+
 
 
 def generate_study_plan(exam_schedule, priorities, spare_days, min_hours=2, max_hours=5, min_subjects=2, max_subjects=None):
@@ -625,26 +658,37 @@ def generate_study_plan(exam_schedule, priorities, spare_days, min_hours=2, max_
 
     return study_plan
 
-     
-
+    
 @csrf_exempt
 def generate_study_plan_api(request):
     # Example usage
     print("Generating study plan...")
     if request.method == 'POST':
         data = json.loads(request.body)
-        exam_schedule = data.get("exam_schedule", None)
-        spare_days = data.get("spare_days", None)
-
-        if not (exam_schedule and spare_days):
-            return Response({
+        exam_subjects = data.get("subjects", None)
+        spare_days = data.get("daysBeforeExam", None)
+        print(exam_subjects, spare_days)
+        if not (exam_subjects and spare_days):
+            return JsonResponse({
                 "status": False,
                 "message": "Invalid request. Please provide exam_schedule and spare_days in the request body.",
             }, status=400)
-        
-        priorities = exam_schedule.values()
-        exam_schedule = exam_schedule.keys()
+        print(123)
+        exam_schedule = []
+        priorities = []
+        try:
+            for subject in exam_subjects:
+                print(subject)
+                exam_schedule.append(subject['name'])
+                priorities.append(int(subject['priority']))
+        except Exception as e:
+            print("Error", e)
+            return JsonResponse({
+                "status": False,
+                "message": "Invalid request. Please provide valid exam_schedule and priorities in the request body.",
+            }, status=400)
 
+        print(priorities, exam_schedule, spare_days, type(spare_days), type(priorities[0]))
         study_plan = generate_study_plan(
             exam_schedule, 
             priorities, 
@@ -652,11 +696,11 @@ def generate_study_plan_api(request):
             min_subjects=2,  
             max_subjects=3   
         )
-        return Response({
+        return JsonResponse({
             "status": True,
             "data": study_plan,
         }, status=200)
-    return Response({
+    return JsonResponse({
         "status": False,
         "message": "Invalid request method. Please use POST method to generate study plan.",
     }, status=400)
