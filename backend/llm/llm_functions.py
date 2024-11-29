@@ -122,7 +122,7 @@ def generate_flashcard(context):
             Requirements:
             1. The flashcards should contian key points from the content provided in the messages.
             2. The points should be clear and concise.
-            3. Always respond in JSON format:
+            3. Always respond in JSON format. It contains a key with list of flashcards.:
                 {"flashcards":["information1", "information2", "information3", ...]}
             4. Output only the JSON. Do not include any additional explanation, headers, or text.
             5. Double-check and validate the correctness of json format before submitting.

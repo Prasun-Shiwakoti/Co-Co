@@ -3,14 +3,15 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Student,Subject,Notes ,Quiz, Flashcard
-from llm.views import get_note, get_quiz, get_flashcard
+from llm.views import get_note, get_flashcard
 from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.utils.decorators import method_decorator
 from datetime import timedelta,datetime
-
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -29,15 +30,14 @@ def UpdateStreakAPI(func):
                 # If the user hasn't updated streak for today, reset streak if necessary
                 
                 if last_activity_date == today - timedelta(days=1):
-                    profile.streak_count = 1  # Reset streak if it's not consecutive days
+                    profile.stats['streak'] = 1  # Reset streak if it's not consecutive days
                 else:
-                    profile.streak_count += 1  # Increment streak for consecutive days
+                    profile.stats['streak'] += 1  # Increment streak for consecutive days
                 
                 # profile.last_activity_date = today
                 profile.save()
 
         # Call the original view function
-        print("Function: ", func)
         return func(request, *args, **kwargs)
     return wrapper
 
@@ -46,8 +46,13 @@ class StudentAPI(APIView):
     def get(self,request):
         subCode = request.GET.get("id", None)
         if not subCode:
-            queryset=Subject.objects.all()
-            serializer= SubjectSerializer(queryset , many=True)
+            # print(1)
+            # print(Student.objects.filter(user=request.user))
+            # print(2)
+            serializer = StudentSerializer(Student.objects.filter(user=request.user), many=True)
+            # queryset=Subject.objects.all()
+
+            # serializer= SubjectSerializer(queryset , many=True)
             return Response({
                 "status": True,
                 "data":serializer.data,
@@ -103,7 +108,7 @@ class LoginAPI(APIView):
             })
 
 class SubjectAPI(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
     def get(self,request):
         subCode = request.GET.get("id", None)
         print(request.user)
@@ -154,10 +159,7 @@ class SubjectAPI(APIView):
         })
 
 
-@method_decorator(UpdateStreakAPI, name='get')
-@method_decorator(UpdateStreakAPI, name='post')
-@method_decorator(UpdateStreakAPI, name='put')
-@method_decorator(UpdateStreakAPI, name='delete')
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class NotesAPI(APIView):
     # permission_classes = [IsAuthenticated]
 
@@ -181,7 +183,16 @@ class NotesAPI(APIView):
             try:
                 subject = Subject.objects.get(id=subject_id, user=student_obj)
                 if not subject.notes.exists():
-                    return get_note(request)
+                    notes = get_note(request)
+                    
+
+                    # Step 2: Parse the JSON string into a Python dictionary
+                    notes_json = json.loads(notes.content)
+                    noteObj = Notes.objects.create(subject=subject, content=notes_json['notes'])
+                    return Response({
+                        "status": True,
+                        "data": NotesSerializer(noteObj).data,
+                    })
                     
                 serializer = NotesSerializer(subject.notes.all(), many=True)
                 return Response({
@@ -251,10 +262,7 @@ class NotesAPI(APIView):
                 "message": "Note not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='get')
-@method_decorator(UpdateStreakAPI, name='post')
-@method_decorator(UpdateStreakAPI, name='put')
-@method_decorator(UpdateStreakAPI, name='delete')
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class QuizAPI(APIView):
     # permission_classes = [IsAuthenticated]
 
@@ -329,15 +337,13 @@ class QuizAPI(APIView):
                 "message": "Quiz not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='get')
-@method_decorator(UpdateStreakAPI, name='post')
-@method_decorator(UpdateStreakAPI, name='put')
-@method_decorator(UpdateStreakAPI, name='delete')
+@method_decorator(UpdateStreakAPI, name='dispatch')
 class FlashcardAPI(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         subject_id = request.GET.get("id", None)
+        print(subject_id, request.user)
         try:
             student_obj = Student.objects.get(user=request.user)
         except Student.DoesNotExist:
@@ -356,9 +362,16 @@ class FlashcardAPI(APIView):
             try:
                 subject = Subject.objects.get(id=subject_id, user=student_obj)
                 if not subject.flashcards.exists():
-                    return get_flashcard(request)
+                    flashcards = get_flashcard(request)
+                
+                    flashcard_json = json.loads(flashcards.content)
+                    noteObj = Flashcard.objects.create(subject=subject, cards=flashcard_json['flashcards'])
+                    return Response({
+                        "status": True,
+                        "data": NotesSerializer(noteObj).data,
+                    })
                     
-                serializer = NotesSerializer(subject.flashcards.all(), many=True)
+                serializer = FlashcardSerializer(subject.flashcards.all(), many=True)
                 return Response({
                     "status": True,
                     "data": serializer.data,
@@ -426,6 +439,72 @@ class FlashcardAPI(APIView):
                 "message": "Flashcard not found",
             }, status=404)
 
+@method_decorator(UpdateStreakAPI, name='dispatch')
+class QuizReportAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        try:
+            student_obj = Student.objects.get(user=request.user)
+            data["user"] = student_obj.id
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
+        
+        # Get the quiz score and current date
+        score = data.get("score", 0)
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        # Get user stats
+        user_stats = student_obj.stats or {"streak": 0, "session_time": {}, "avg_quiz_score": {}}
+        
+        # --- Update streak ---
+        streak = user_stats.get("streak", 0)
+        avg_quiz_score = user_stats.get("avg_quiz_score", {})
+
+        # Check the last quiz date
+        if avg_quiz_score:
+            last_quiz_date = max(avg_quiz_score.keys())
+            last_quiz_date_obj = datetime.strptime(last_quiz_date, "%Y-%m-%d")
+
+            # Increment streak if the quiz is taken on the next day
+            if (last_quiz_date_obj + timedelta(days=1)).strftime("%Y-%m-%d") == today:
+                streak += 1
+            else:
+                streak = 1  # Reset streak
+        else:
+            streak = 1  # First quiz attempt
+
+        user_stats["streak"] = streak
+
+        # --- Update average quiz score ---
+        if today not in avg_quiz_score:
+            # Initialize today's score stats
+            avg_quiz_score[today] = {"score": 0, "total": 0, "average": 0}
+
+        avg_quiz_score_today = avg_quiz_score[today]
+        avg_quiz_score_today["score"] += score
+        avg_quiz_score_today["total"] += 1
+        avg_quiz_score_today["average"] = avg_quiz_score_today["score"] / avg_quiz_score_today["total"]
+
+        user_stats["avg_quiz_score"] = avg_quiz_score
+
+        # --- Save updated stats back to the database ---
+        student_obj.stats = user_stats
+        student_obj.save()
+
+        return Response({
+            "status": True,
+            "message": "Quiz stats updated successfully",
+            "stats": user_stats,
+        }, status=200)
+        
+@csrf_exempt
+def generate_study_plan(request):
+    pass
 
 def home(request):
     return HttpResponse("HOME PAGE")
