@@ -20,7 +20,9 @@ const Login = () => {
             })
             await res.json().then((response) => {
                 setLoading(false)
+                console.log(response)
                 if (response.status) {
+                    localStorage.setItem("token", response.data.token)
                     navigate('/subjects');
                 }
             })
