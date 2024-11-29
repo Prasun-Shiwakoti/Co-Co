@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import Carousel from "react-bootstrap/Carousel";
 import { useParams } from "react-router-dom";
+import { PiCardsFill } from "react-icons/pi";
 
 import "./FlashCards.css";
 const FlashCards = () => {
@@ -46,7 +47,7 @@ const FlashCards = () => {
       <div className="flex-col flex items-center justify-center">
         <div className="flex flex-col p-4 w-[100%] ">
           <div className="bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh] ">
-            <FaUser className="text-blue-900 text-2xl ml-4" />
+            <PiCardsFill className="text-blue-900 text-2xl ml-4" />
             <h1 className="text-blue-900 text-2xl font-bold ml-2">
               FlashCards
             </h1>

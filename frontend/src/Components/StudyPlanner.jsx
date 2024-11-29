@@ -3,7 +3,7 @@ import { FaUser } from "react-icons/fa";
 import Planner from "./Planner";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
-
+import { SlCalender } from "react-icons/sl";
 const StudyPlanner = () => {
   const [studyPlan, setStudyPlan] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -125,7 +125,7 @@ const StudyPlanner = () => {
           <div className="flex-col flex items-center justify-center">
             <div className=" p-4 w-[100%]">
               <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
-                <FaUser className="text-blue-900 text-2xl ml-4" />
+                <SlCalender className="text-blue-900 text-2xl ml-4" />
                 <h1 className="text-blue-900 text-2xl font-bold ml-2">
                   Planner
                 </h1>
