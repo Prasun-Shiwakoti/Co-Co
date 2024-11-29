@@ -112,7 +112,7 @@ const Subjects = () => {
             {/* "+" button to add a subject */}
             <div className=" flex justify-start w-[20vw] ">
               <div
-                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
+                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md  w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
                 onClick={() => setModal(true)}
               >
                 <div className="text-blue-900 text-4xl flex justify-center items-center text-center ">
