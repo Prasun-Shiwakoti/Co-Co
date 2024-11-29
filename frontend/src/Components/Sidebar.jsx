@@ -52,23 +52,25 @@ const Sidebar = () => {
           <ul className="mt-12 w-3/4 flex flex-col gap-4  ">
             <li className=" text-start">
               <button
-                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${location.pathname === "/subjects"
+                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${
+                  location.pathname === "/subjects"
                     ? "bg-blue-900 text-blue-50"
                     : " bg-white text-blue-900"
-                  }`}
+                }`}
                 onClick={() => {
                   navigate("/subjects");
                 }}
               >
-                Subjects
+                Topics
               </button>
             </li>
             <li>
               <button
-                className={`w-full py-2 px-4 border rounded-full  hover:shadow-xl  hover:shadow-blue-200 text-start ${location.pathname === "/dashboard"
+                className={`w-full py-2 px-4 border rounded-full  hover:shadow-xl  hover:shadow-blue-200 text-start ${
+                  location.pathname === "/dashboard"
                     ? "bg-blue-900 text-blue-50"
                     : " bg-white text-blue-900"
-                  }`}
+                }`}
                 onClick={() => {
                   navigate("/dashboard");
                 }}
@@ -78,10 +80,11 @@ const Sidebar = () => {
             </li>
             <li>
               <button
-                className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-200 rounded-full text-start ${location.pathname === "/notes"
+                className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-200 rounded-full text-start ${
+                  location.pathname === "/notes"
                     ? "bg-blue-900 text-blue-50"
                     : " bg-white text-blue-900"
-                  }`}
+                }`}
                 onClick={() => {
                   navigate("/notes");
                 }}
@@ -105,10 +108,11 @@ const Sidebar = () => {
             </li> */}
             <li>
               <button
-                className={`w-full py-2 px-4 border hover:shadow-xl hover hover:shadow-blue-200 rounded-full text-start ${location.pathname === "/flashcards"
+                className={`w-full py-2 px-4 border hover:shadow-xl hover hover:shadow-blue-200 rounded-full text-start ${
+                  location.pathname === "/flashcards"
                     ? "bg-blue-900 text-blue-50"
                     : " bg-white text-blue-900"
-                  }`}
+                }`}
                 onClick={() => {
                   navigate("/flashcards");
                 }}
@@ -118,10 +122,11 @@ const Sidebar = () => {
             </li>
             <li className=" text-start">
               <button
-                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${location.pathname === "/planner"
+                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${
+                  location.pathname === "/planner"
                     ? "bg-blue-900 text-blue-50"
                     : " bg-white text-blue-900"
-                  }`}
+                }`}
                 onClick={() => {
                   navigate("/planner");
                 }}

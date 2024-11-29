@@ -82,7 +82,7 @@ const Subjects = () => {
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className="bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">Subject</h1>
+              <h1 className="text-blue-900 text-2xl font-bold ml-2">Topics</h1>
             </div>
           </div>
           <hr className="border-blue-900 w-[95%]" />
@@ -95,12 +95,12 @@ const Subjects = () => {
             {/* Render subjects */}
             {subjects.map((subject) => {
               return (
-                <div className="m-8 flex justify-start w-[20vw]">
+                <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200">
                   <div
                     className="flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
                     onClick={() => navigate(`/subjects/${subject.id}`)}
                   >
-                    <div className="text-blue-900 text-4xl text-center">
+                    <div className="text-blue-900 text-4xl text-center ">
                       {subject.name}
                     </div>
                   </div>
