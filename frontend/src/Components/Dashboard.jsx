@@ -117,7 +117,7 @@ const Dashboard = () => {
           </div>
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
             <p className="text-2xl font-bold text-center">Quizz :</p>
-            <h1 className="text-4xl font-bold">0</h1>
+            <h1 className="text-4xl font-bold">{chartData.avgQuizScoreData.length}</h1>
           </div>
         </div>
 
