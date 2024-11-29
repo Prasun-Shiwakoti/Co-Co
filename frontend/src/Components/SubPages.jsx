@@ -23,13 +23,15 @@ const SubPages = () => {
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://10.10.11.29:8000/notes/${id}`, {
+      const res = await fetch(`http://10.10.11.29:8000/note?id=${id}`, {
         method: "GET",
         headers: { "authorization": `token ${token}` },
       });
       const response = await res.json();
       if (response.status) {
+        console.log(response)
         setNote(response.data);
+        console.log(note)
         setLoading(false);
       } else {
         setError(response.message);
@@ -105,7 +107,7 @@ const SubPages = () => {
       <div className="flex justify-between items-start">
         <div className="m-8 flex-row flex gap-5 w-[100%]">
           {/* Note */}
-          <NoteCard subjectName={"Note"} value />
+          <NoteCard subjectName={"Note"} value={note[0]?.content} />
 
           {/* Flashcard */}
           <Card style={{ width: "18rem" }} className="border-none">

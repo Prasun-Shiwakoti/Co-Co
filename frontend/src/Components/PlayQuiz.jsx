@@ -14,28 +14,27 @@ const PlayQuiz = () => {
   const token = localStorage.getItem("token");
   const { id } = useParams();
 
-  console.log(quiz, qn);
-
   useEffect(() => {
     fetchQuiz();
-  }, [quiz]);
+  }, []);
 
   const fetchQuiz = async () => {
     try {
       const res = await fetch(`http://10.10.11.29:8000/llm/generate_quiz?id=${id}`, {
         headers: { "authorization": `token ${token}` }
       })
-      await res.json().then(response => {
-        if (response.ok) {
-          setQuiz(response);
-          setLoading(false);
-        }
-        else {
-          setError('Error Fetching Quiz')
-          setLoading(false);
-          setTimeout(() => { setError(''), [3000] })
-        }
-      });
+      console.log('quiz')
+      const response = await res.json();
+      console.log(response)
+      if (response) {
+        setQuiz(response.questions);
+        setLoading(false);
+      }
+      else {
+        setError('Error Fetching Quiz')
+        setLoading(false);
+        setTimeout(() => { setError(''), [3000] })
+      }
     } catch (err) {
       setError(err);
       setLoading(false)
@@ -43,11 +42,15 @@ const PlayQuiz = () => {
     }
   };
 
-  const sendQuizResults = () => { };
+  const sendQuizResults = async () => {
+    const res = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+  };
 
-  const checkCorrect = (bool) => {
-    console.log(bool);
-    if (bool) {
+  const checkCorrect = (option, ans) => {
+    if (option === ans) {
       setCurrentScore((prev) => prev + 1);
       console.log(currentScore);
       console.log("correct");
@@ -76,15 +79,15 @@ const PlayQuiz = () => {
           <hr className="border-blue-900 w-[95%] " />
 
           <div>
-            {qn?.options.map((option, index) => {
+            {qn?.choices.map((option, index) => {
               return (
                 <div key={index}>
                   <div
-                    onClick={() => checkCorrect(option.isCorrect)}
+                    onClick={() => checkCorrect(option, qn.answer)}
                     className="mt-8  cursor-pointer"
                   >
                     <p className="border border-slate-400 rounded-full m-2 p-3 hover:shadow-slate-300 hover:shadow-xl bg-gray-100">
-                      {option.text}
+                      {option}
                     </p>
                   </div>
                 </div>
@@ -99,6 +102,7 @@ const PlayQuiz = () => {
           <h1 className="text-2xl font-bold">{`Your Score : ${currentScore}/${quiz.length}`}</h1>
         </div>
       )}
+      {console.log(quiz)}
     </div>
   );
 };
