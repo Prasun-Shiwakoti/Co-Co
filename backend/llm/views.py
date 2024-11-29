@@ -123,12 +123,12 @@ class GetChatAPIView(APIView):
             data = request.data
             prompt = data.get('prompt', '')
             subject_id = data.get('id', '')
+            print(prompt, subject_id, request.user)
 
             if not (subject_id and prompt):
                 return Response({'error': 'Both Context and Prompt are required'}, status=HTTP_400_BAD_REQUEST)
 
             try:
-                print(Subject.objects.get(id=subject_id), request.user)
                 # Fetch the subject associated with the authenticated user
                 sub = Subject.objects.get(id=subject_id, user__user=request.user)
 
