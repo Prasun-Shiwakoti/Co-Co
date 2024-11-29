@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button, Spinner, Alert, Card } from "react-bootstrap";
+import { HiMenuAlt2 } from "react-icons/hi";
 
 const Subjects = () => {
   const [subjects, setSubjects] = useState([]);
@@ -62,7 +63,7 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { "authentication": `token ${token}` },
+        headers: { authentication: `token ${token}` },
         body: JSON.stringify(formData),
       });
       await res.json().then((response) => {
@@ -81,7 +82,7 @@ const Subjects = () => {
         <div className="flex-col flex items-center justify-center">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className="bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
-              <FaUser className="text-blue-900 text-2xl ml-4" />
+              <HiMenuAlt2 className="text-blue-900 text-2xl ml-4" />
               <h1 className="text-blue-900 text-2xl font-bold ml-2">Topics</h1>
             </div>
           </div>
@@ -109,12 +110,12 @@ const Subjects = () => {
             })}
 
             {/* "+" button to add a subject */}
-            <div className=" flex justify-start w-[20vw]">
+            <div className=" flex justify-start w-[20vw] ">
               <div
-                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
+                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
                 onClick={() => setModal(true)}
               >
-                <div className="text-blue-900 text-4xl flex justify-center items-center text-center">
+                <div className="text-blue-900 text-4xl flex justify-center items-center text-center ">
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                     +
                   </div>
@@ -170,7 +171,7 @@ const Subjects = () => {
                 multiple
                 accept="application/pdf"
                 className="ml-2"
-                id='file'
+                id="file"
                 onChange={(e) => {
                   setFormData({
                     ...formData, // Spread formData correctly

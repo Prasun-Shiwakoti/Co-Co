@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import StudentAPI, LoginAPI, SubjectAPI, NotesAPI, QuizAPI, FlashcardAPI
+from .views import StudentAPI, LoginAPI, SubjectAPI, NotesAPI, QuizAPI, FlashcardAPI, QuizReportAPI
 
 
 urlpatterns=[
@@ -12,4 +12,6 @@ urlpatterns=[
     path("note/",NotesAPI.as_view()),   
     path("quiz/",QuizAPI.as_view()),
     path("flashcard/",FlashcardAPI.as_view()), 
+    path("quiz_report/", QuizReportAPI.as_view()),
+    path('generate_study_plan/', views.generate_study_plan, name='generate_study_plan'),
 ]

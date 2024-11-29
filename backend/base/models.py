@@ -56,7 +56,6 @@ class Quiz(models.Model):
         return f"Quiz (Chapter: {self.subject.name})"
 
 class Flashcard(models.Model):
-    code = models.CharField(max_length=10, unique=True, default='DEFAULT')
     cards = models.JSONField(default=dict, null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='flashcards')
 
