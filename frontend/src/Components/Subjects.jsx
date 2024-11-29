@@ -22,17 +22,16 @@ const Subjects = () => {
   const fetchSubjects = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://10.10.11.29:8000/subject/', {
-        method: 'GET',
-        headers: { "authorization": `token ${token}` }
-      })
-      await res.json().then(response => {
+      const res = await fetch("http://10.10.11.29:8000/subject/", {
+        method: "GET",
+        headers: { authorization: `token ${token}` },
+      });
+      await res.json().then((response) => {
         if (response.status) {
           setSubjects(response.data);
-          setLoading(false)
-          console.log(subjects)
-        }
-        else {
+          setLoading(false);
+          console.log(subjects);
+        } else {
           setFormError(response.message);
           setLoading(false);
         }
@@ -63,7 +62,7 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { "authentication": `token ${token}` },
+        headers: { authentication: `token ${token}` },
         body: formData,
       });
       await res.json().then((response) => {
@@ -80,41 +79,43 @@ const Subjects = () => {
   return (
     <>
       <div className="w-[80%] h-screen relative">
-        <div className="flex-col flex items-center justify-center  ">
+        <div className="flex-col flex items-center justify-center">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
-            <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
+            <div className="bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
               <h1 className="text-blue-900 text-2xl font-bold ml-2">Subject</h1>
             </div>
           </div>
-          <hr className="border-blue-900 w-[95%] " />
+          <hr className="border-blue-900 w-[95%]" />
         </div>
+
         {loading ? (
           <Spinner variant="primary" className="absolute left-[50%] mt-4" />
         ) : (
-          <div className="flex gap-4">
-            {
-              subjects.map((subject) => {
-                return (
-                  <div className="m-8 flex justify-start w-16">
-                    <div
-                      className=" ml-8 flex justify-start bg-blue-100 p-4 rounded-md cursor-pointer"
-                      onClick={() => navigate(`/subjects/${subject.id}`)}
-                    >
-                      <div className="text-blue-900 text-4xl flex items-center">
-                        <p className="text-auto">{subject.name}</p>
-                      </div>
+          <div className="flex gap-4 flex-wrap">
+            {/* Render subjects */}
+            {subjects.map((subject) => {
+              return (
+                <div className="m-8 flex justify-start w-[20vw]">
+                  <div
+                    className="flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
+                    onClick={() => navigate(`/subjects/${subject.id}`)}
+                  >
+                    <div className="text-blue-900 text-4xl text-center">
+                      {subject.name}
                     </div>
                   </div>
-                )
-              })
-            }
-            <div className="m-8 flex justify-start ">
+                </div>
+              );
+            })}
+
+            {/* "+" button to add a subject */}
+            <div className=" flex justify-start w-[20vw]">
               <div
-                className=" ml-8 flex justify-start bg-blue-100 p-4 rounded-md cursor-pointer"
+                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
                 onClick={() => setModal(true)}
               >
-                <div className="text-blue-900 text-4xl ">
+                <div className="text-blue-900 text-4xl flex justify-center items-center text-center">
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                     +
                   </div>
@@ -123,6 +124,7 @@ const Subjects = () => {
             </div>
           </div>
         )}
+
         {error && (
           <div className="flex justify-center">
             <Alert variant="danger" className="max-w-[50%] text-center">
@@ -131,6 +133,7 @@ const Subjects = () => {
           </div>
         )}
       </div>
+
       {modal && (
         <Modal
           size="md"
@@ -168,7 +171,7 @@ const Subjects = () => {
                 multiple
                 accept="application/pdf"
                 className="ml-2"
-                id='file'
+                id="file"
                 onChange={(e) => {
                   setFormData({
                     ...formData, // Spread formData correctly

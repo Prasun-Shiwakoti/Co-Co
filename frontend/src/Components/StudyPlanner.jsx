@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import React, { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import Planner from "./Planner";
 import { useNavigate } from "react-router-dom";
