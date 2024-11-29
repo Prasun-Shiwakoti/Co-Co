@@ -1,21 +1,24 @@
 import os
 import json
-import re
-import requests
 
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.utils.decorators import method_decorator 
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from django.core.exceptions import ObjectDoesNotExist
 
 from pdf2image import convert_from_path
-from json_repair import repair_json
-from huggingface_hub import InferenceClient
 
 from .llm_functions import generate_chat, generate_flashcard, generate_notes, generate_quiz, summarize_text, upload_to_imgbb, extract_text_from_image
 
 from .models import PDFText
 from base.models import Subject
+
 
 
 
@@ -28,7 +31,7 @@ def get_note(request):
             if not id:
                 return JsonResponse({'error': 'No id provided'}, status=400) 
             try:
-                sub = Subject.objects.get(id=id)
+                sub = Subject.objects.get(id=id, user__user=request.user)
                 pdfs = PDFText.objects.filter(subject=sub)
                 context = ""
                 for pdf in pdfs:
@@ -42,72 +45,130 @@ def get_note(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
     
 
+class GetQuizAPIView(APIView):
+    """
+    API endpoint to generate a quiz based on the provided subject ID.
+    """
+    permission_classes = [IsAuthenticated]
 
-@csrf_exempt
-def get_quiz(request):
-    if request.method == 'POST':
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests to generate a quiz.
+        """
         try:
-            data = json.loads(request.body)
-            context = data.get('context', '') 
-            if not context:
-                return JsonResponse({'error': 'No context provided'}, status=400)
-            else:
+            subject_id = request.query_params.get('id', None)
+
+            if not subject_id:
+                return Response({'error': 'No id provided'}, status=HTTP_400_BAD_REQUEST)
+
+            try:
+                # Fetch the subject associated with the authenticated user
+                sub = Subject.objects.get(id=subject_id, user__user=request.user)
+
+                # Fetch all PDFs related to the subject
+                pdfs = PDFText.objects.filter(subject=sub)
+
+                # Construct the context from the text contents of PDFs
+                context = ''.join(pdf.text_content for pdf in pdfs)
+
+                # Generate the quiz
                 quiz = generate_quiz(context)
-                if type(quiz) == list:
+
+                # Wrap the quiz in a dictionary if it's a list
+                if isinstance(quiz, list):
                     quiz = {"quiz": quiz}
-                return JsonResponse(quiz, status=200)
+
+                return Response(quiz, status=HTTP_200_OK)
+
+            except ObjectDoesNotExist:
+                return Response({'error': 'Invalid Subject Code'}, status=HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'error': str(e)}, status=HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+            return Response({'error': str(e)}, status=HTTP_400_BAD_REQUEST)
         
 @csrf_exempt
 def get_flashcard(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         try:
-            data = json.loads(request.body)
-            context = data.get('context', '') 
-            if not context:
-                return JsonResponse({'error': 'No context provided'}, status=400)
-            else:
-                flashcard = generate_flashcard(context)
-                return JsonResponse(flashcard, status=200)
+            id = request.GET.get('id', None)
+            if not id:
+                return JsonResponse({'error': 'No id provided'}, status=400) 
+            try:
+                sub = Subject.objects.get(id=id)
+                pdfs = PDFText.objects.filter(subject=sub)
+                context = ""
+                for pdf in pdfs:
+                    context += pdf.text_content
+                flashcards = generate_flashcard(context)
+                return JsonResponse(flashcards, status=200)
+            except Exception as e:
+                return JsonResponse({'error': 'Invalid Subject Code'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+class GetChatAPIView(APIView):
+    """
+    API endpoint to handle chat generation based on provided context and prompt.
+    """
+    permission_classes = [IsAuthenticated]
 
-@csrf_exempt
-def get_chat(request):
-    if request.method == 'POST':
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests to process chat requests.
+        """
         try:
-            data = json.loads(request.body)
+            data = request.data
             prompt = data.get('prompt', '')
-            context = data.get('context', '') 
-            if not (context and prompt):
-                return JsonResponse({'error': 'Both Context and Prompt is required'}, status=400)
-            else:
-                chat = generate_chat(context, prompt)
-                return JsonResponse({"response": chat}, status=200)
+            subject_id = data.get('id', '')
+
+            if not (subject_id and prompt):
+                return Response({'error': 'Both Context and Prompt are required'}, status=HTTP_400_BAD_REQUEST)
+
+            try:
+                print(Subject.objects.get(id=subject_id), request.user)
+                # Fetch the subject associated with the authenticated user
+                sub = Subject.objects.get(id=subject_id, user__user=request.user)
+
+                # Fetch all PDFs related to the subject
+                pdfs = PDFText.objects.filter(subject=sub)
+
+                # Construct the context from the text contents of PDFs
+                context = ''.join(pdf.text_content for pdf in pdfs)
+
+                # Generate the chat response
+                chat_response = generate_chat(context, prompt)
+                return Response(chat_response, status=HTTP_200_OK)
+            except ObjectDoesNotExist:
+                return Response({'error': 'Subject not found or unauthorized access'}, status=HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response({'error': str(e)}, status=HTTP_400_BAD_REQUEST)
+
+        except json.JSONDecodeError:
+            return Response({'error': 'Invalid JSON'}, status=HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-
+            return Response({'error': str(e)}, status=HTTP_400_BAD_REQUEST)
+        
 def home(request):
     return HttpResponse("""
-    <h1>LLM API</hjson>
-    <form action="pdf_upload/" method="POST" enctype="multipart/form-data"><input type="file" name="pdf" accept=".pdf" required><button type="submit">Upload PDF</button></form>
+    <h1>LLM API</h1>
+    <form action="pdf_upload/" method="POST" enctype="multipart/form-data"><input type="file" name="pdf" accept=".pdf" required><button type="submit">Upload PDF</button>
+    <input type="text" name="subject_id" placeholder="Subject ID" required>                    
+    </form>
 """)
 
 # Function to upload image to ImgBB
 
-# Django view to handle PDF upload, convert to images, upload to ImgBB, and extract text
 @csrf_exempt
 def pdf_upload(request):
-    print(request.FILES)
     if request.method == 'POST' and request.FILES.get('pdf'):
         pdf_file = request.FILES['pdf']
+        subject_id = request.GET.get('id', None)
+        # print(request.GET, subject_id, pdf_file)
         # Save the uploaded PDF file temporarily
+        # return JsonResponse({'error': 'Test'}, status=400)
         pdf_path = default_storage.save(f'temp_{pdf_file.name}', ContentFile(pdf_file.read()))
         pdf_path_full = os.path.join(default_storage.location, pdf_path)
         # Convert PDF to images
@@ -141,11 +202,20 @@ def pdf_upload(request):
             summarized_text = summarize_text(extracted_text)
         else:
             summarized_text = extracted_text
-
-        PDFText.objects.create(
-            text_content=summarized_text,
-            subject = Subject.objects.first()
-        )
+        print("Summarized:\t\t\t", summarized_text)
+        try:
+            try:
+                print(subject_id)
+                print("Subject ID:\t\t\t", Subject.objects.get(id=subject_id) )
+            except:
+                return JsonResponse({'error': 'Invalid Subject ID'}, status=400)
+            PDFText.objects.create(
+                text_content=summarized_text,
+                subject = Subject.objects.get(id=subject_id)
+            )
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': str(e)}, status=400)
 
         return JsonResponse({
             'status': 'success', 
