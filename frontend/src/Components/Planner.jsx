@@ -5,7 +5,7 @@ const Planner = ({ weekData }) => {
   // Helper function to calculate box color based on duration
   const getBoxColor = (duration) => {
     if (duration > 2.5) return "bg-red-500"; // High priority (> 4 hrs)
-    if (duration > 1.75) return "bg-orange-400"; // Medium priority (> 2.5 hrs)
+    if (duration > 1.75) return "bg-amber-400"; // Medium priority (> 2.5 hrs)
     else return "bg-green-500"; // Low priority (<= 2.5 hrs)
   };
 

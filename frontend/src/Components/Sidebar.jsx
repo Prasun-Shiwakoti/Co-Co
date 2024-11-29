@@ -103,7 +103,7 @@ const Sidebar = () => {
                   navigate("/quiz");
                 }}
               >
-                Quizes
+                Quizzes
               </button>
             </li>
             <li>
