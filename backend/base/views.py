@@ -1,17 +1,29 @@
-from django.shortcuts import render
+import json 
 from django.http import HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Student,Subject,Notes ,Quiz, Flashcard
-from llm.views import get_note, get_flashcard
-from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
+
+from .models import Student, Subject, Notes, Quiz, Flashcard
+
+from .serializers import (
+    StudentSerializer,
+    LoginSerializer,
+    SubjectSerializer,
+    NotesSerializer,
+    QuizSerializer,
+    FlashcardSerializer,
+)
+
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-from django.utils.decorators import method_decorator
-from datetime import timedelta,datetime
-import json
-from django.views.decorators.csrf import csrf_exempt
+
+from llm.views import get_note, get_flashcard
+
+from datetime import timedelta, datetime
 
 # Create your views here.
 
@@ -667,18 +679,15 @@ def generate_study_plan_api(request):
         data = json.loads(request.body)
         exam_subjects = data.get("subjects", None)
         spare_days = data.get("daysBeforeExam", None)
-        print(exam_subjects, spare_days)
         if not (exam_subjects and spare_days):
             return JsonResponse({
                 "status": False,
                 "message": "Invalid request. Please provide exam_schedule and spare_days in the request body.",
             }, status=400)
-        print(123)
         exam_schedule = []
         priorities = []
         try:
             for subject in exam_subjects:
-                print(subject)
                 exam_schedule.append(subject['name'])
                 priorities.append(int(subject['priority']))
         except Exception as e:
@@ -688,7 +697,6 @@ def generate_study_plan_api(request):
                 "message": "Invalid request. Please provide valid exam_schedule and priorities in the request body.",
             }, status=400)
 
-        print(priorities, exam_schedule, spare_days, type(spare_days), type(priorities[0]))
         study_plan = generate_study_plan(
             exam_schedule, 
             priorities, 
