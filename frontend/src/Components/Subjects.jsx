@@ -25,7 +25,7 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "GET",
-        headers: { authorization: `token ${token}` },
+        headers: { "authorization": `token ${token}` },
       });
       await res.json().then((response) => {
         if (response.status) {
@@ -63,7 +63,7 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { "authentication": `token ${token}` },
+        headers: { authentication: `token ${token}` },
         body: JSON.stringify(formData),
       });
       await res.json().then((response) => {
@@ -110,12 +110,12 @@ const Subjects = () => {
             })}
 
             {/* "+" button to add a subject */}
-            <div className=" flex justify-start w-[20vw]">
+            <div className=" flex justify-start w-[20vw] ">
               <div
-                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
+                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md  w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
                 onClick={() => setModal(true)}
               >
-                <div className="text-blue-900 text-4xl flex justify-center items-center text-center">
+                <div className="text-blue-900 text-4xl flex justify-center items-center text-center ">
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                     +
                   </div>
@@ -171,7 +171,7 @@ const Subjects = () => {
                 multiple
                 accept="application/pdf"
                 className="ml-2"
-                id='file'
+                id="file"
                 onChange={(e) => {
                   setFormData({
                     ...formData, // Spread formData correctly

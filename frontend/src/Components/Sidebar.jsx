@@ -4,10 +4,52 @@ import { GiBrain } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import Chatbot from "./Chatbot";
 import RightOffcanvas from "./OffCanvas";
+import { useLocation } from "react-router-dom";
 const Sidebar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(true);
   const [showChatbot, setShowChatBot] = useState(false);
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetchSubjects();
+  }, [location.pathname]);
+
+  const fetchSubjects = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://10.10.11.29:8000/subject/", {
+        method: "GET",
+        headers: { authorization: `token ${token}` },
+      });
+      console.log("res");
+
+      const response = await res.json();
+      if (response.status) {
+        console.log(response.data);
+        setSubjects(response.data);
+        setLoading(false);
+        console.log(response);
+      } else {
+        setError(response.message);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Error fetching subject");
+      setTimeout(() => {
+        setError("");
+      }, [3000]);
+      setLoading(false);
+    }
+  };
+
+  console.log(subjects);
 
   useEffect(() => {
     console.log(location.pathname);
@@ -131,13 +173,13 @@ const Sidebar = () => {
                   navigate("/planner");
                 }}
               >
-                Study-Planner
+                Study Planner
               </button>
             </li>
           </ul>
         </div>
         {showChatbot ? (
-          <Chatbot close={() => setShowChatBot(false)} />
+          <Chatbot close={() => setShowChatBot(false)} subjects={subjects} />
         ) : (
           <div
             className="mt-auto hover:shadow-xl hover:shadow-blue-200 cursor-pointer bg-blue-900 rounded-full w-[60px] h-[60px] transition  text-start fixed right-0 bottom-0 flex items-center justify-center m-2"

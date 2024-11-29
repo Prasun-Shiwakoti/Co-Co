@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import NoteCard from "./NoteCard";
-import { Card } from "react-bootstrap";
+import { Card, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const Quiz = () => {
@@ -11,6 +11,7 @@ const Quiz = () => {
   const [error, setError] = useState(null);
   const [quizes, setQuizes] = useState([]);
 
+
   const fetchQuizzes = async () => {
     try {
       const res = await fetch(`http://10.10.11.29:8000/quiz/`, {
@@ -18,7 +19,7 @@ const Quiz = () => {
       })
       await res.json().then(response => {
         if (response.ok) {
-          setQuiz(response);
+          setQuizes(response);
           setLoading(false);
         }
         else {
@@ -50,23 +51,27 @@ const Quiz = () => {
         </div>
       </div>
       <div className="flex">
-        {quizes.map((quiz, index) => (
-          <Card
-            style={{ width: "18rem" }}
-            className="bg-transparent border-none "
-          >
-            <Card.Body
-              className="m-8 bg-blue-100 p-4 rounded-lg h-auto cursor-pointer shadow-xl shadow-blue-200"
-              onClick={() => {
-                navigate(`/quiz/${quiz.id}`);
-              }}
-            >
-              <Card.Title className="text-center text-2xl">
-                {quiz.subjectName}
-              </Card.Title>
-            </Card.Body>
-          </Card>
-        ))}
+        {
+          loading ? (<Spinner />) :
+
+            quizes.map((quiz, index) => (
+              <Card
+                style={{ width: "18rem" }}
+                className="bg-transparent border-none "
+              >
+                <Card.Body
+                  className="m-8 bg-blue-100 p-4 rounded-lg h-auto cursor-pointer shadow-xl shadow-blue-200"
+                  onClick={() => {
+                    navigate(`/quiz/${quiz.id}`);
+                  }}
+                >
+                  <Card.Title className="text-center text-2xl">
+                    {quiz.subjectName}
+                  </Card.Title>
+                </Card.Body>
+              </Card>
+            ))
+        }
       </div>
     </div>
   );
