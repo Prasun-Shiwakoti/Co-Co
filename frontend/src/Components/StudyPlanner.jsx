@@ -1,7 +1,36 @@
 import React from "react";
 import { FaUser } from "react-icons/fa";
+import Planner from "./Planner";
 
 const StudyPlanner = () => {
+  const backendData = [
+    [
+      { sub: "History", duration: 3.05 },
+      { sub: "Math", duration: 2.05 },
+      { sub: "Science", duration: 1.86 },
+    ],
+    [
+      { sub: "Math", duration: 2.57 },
+      { sub: "Math", duration: 1.2 },
+    ],
+    [
+      { sub: "History", duration: 1.4 },
+      { sub: "English", duration: 2.26 },
+    ],
+    [
+      { sub: "History", duration: 2.74 },
+      { sub: "Geography", duration: 2.26 },
+    ],
+    [
+      { sub: "Geography", duration: 2.53 },
+      { sub: "Math", duration: 2.47 },
+    ],
+    [
+      { sub: "Math", duration: 3.31 },
+      { sub: "Science", duration: 1.69 },
+    ],
+    [{ sub: "Science", duration: 5 }],
+  ];
   return (
     <div className="w-[80%]">
       <div>
@@ -15,7 +44,8 @@ const StudyPlanner = () => {
           <hr className="border-blue-900 w-[95%] " />
         </div>
       </div>
-      <div></div>
+
+      <Planner weekData={backendData} />
     </div>
   );
 };

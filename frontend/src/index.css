@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom Scrollbar Styles */
+/* Custom Scrollbar Styles */
+/* Custom Scrollbar Styles */
+@layer components {
+  .scrollbar-none {
+    scrollbar-width: thin; /* Use a thin scrollbar */
+    scrollbar-color: #1e3a8a #e2e8f0; /* blue-900 (thumb) and blue-100 (track) */
+  }
+
+  /* For Webkit Browsers */
+  .scrollbar-none::-webkit-scrollbar {
+    width: 8px; /* Thin scrollbar width */
+    height: 8px; /* If you want to make it horizontal as well */
+    border-radius: 8px; /* Rounded corners for the scrollbar */
+  }
+
+  .scrollbar-none::-webkit-scrollbar-track {
+    background: #e2e8f0; /* blue-100 background for the scrollbar track */
+    border-radius: 8px; /* Rounded track */
+  }
+
+  .scrollbar-none::-webkit-scrollbar-thumb {
+    background-color: #1e3a8a; /* blue-900 color for the slider (thumb) */
+    border-radius: 8px; /* Rounded thumb */
+  }
+
+  /* Hide the scrollbar arrows */
+  .scrollbar-none::-webkit-scrollbar-button {
+    display: none; /* Hide the arrows on both ends of the scrollbar */
+  }
+
+  .scrollbar-none::-webkit-scrollbar-thumb:hover {
+    background-color: #1d4ed8; /* Slightly lighter blue when hovering */
+  }
+
+  /* Firefox specific styles */
+  .scrollbar-none::-moz-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-none::-moz-scrollbar-thumb {
+    background-color: #1e3a8a;
+    border-radius: 8px;
+  }
+
+  .scrollbar-none::-moz-scrollbar-track {
+    background-color: #e2e8f0;
+    border-radius: 8px;
+  }
+}
