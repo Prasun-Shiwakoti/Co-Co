@@ -11,6 +11,7 @@ const StudyPlanner = () => {
     subjects: [],
     priority: [],
   });
+  const token = localStorage.getItem('token')
 
   // Initialize state for handling form inputs
   const [daysBeforeExam, setDaysBeforeExam] = useState(7);
@@ -37,7 +38,7 @@ const StudyPlanner = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Collect the data in the format for formData
@@ -49,54 +50,57 @@ const StudyPlanner = () => {
     const data = {
       daysBeforeExam: daysBeforeExam,
       subjects: subjectData,
-      priority: subjects.map((subject) => subject.priority),
     };
 
     // Update the formData state
     setFormData(data);
 
     // Log the form data (you can send it to backend or process it further)
-    console.log("Form Data: ", data);
+    const res = await fetch('http://10.10.11.29:8000/generate_study_plan/', {
+      method: 'POST',
+      headers: { "authorization": `token ${token}`, "Content-Type": "application/json", },
+      body: JSON.stringify(data),
+    })
+    const response = await res.json();
+    console.log(response);
   };
 
-  useEffect(() => {
-    fetchStudyPlan();
-  }, []);
-
-  const fetchStudyPlan = async () => {
-    setLoading(true);
-    try {
-      // console.log('fecth')
-      const res = await fetch("/");
-      const response = await res.json();
-      if (response.status) {
-        setStudyPlan(response.data);
-        setError("");
-        setLoading(false);
-      } else {
-        setLoading(false);
-        setError(response.message);
-        setTimeout(() => setError(""), 3000);
-      }
-    } catch (err) {
-      setLoading(false);
-      setError("Error fetching Plans");
-      setTimeout(() => {
-        setError("");
-      }, [3000]);
-    }
-  };
+  // const fetchStudyPlan = async () => {
+  //   setLoading(true);
+  //   try {
+  //     // console.log('fecth')
+  //     const res = await fetch("");
+  //     const response = await res.json();
+  //     if (response.status) {
+  //       setStudyPlan(response.data);
+  //       setError("");
+  //       setLoading(false);
+  //     } else {
+  //       setLoading(false);
+  //       setError(response.message);
+  //       setTimeout(() => setError(""), 3000);
+  //     }
+  //   } catch (err) {
+  //     setLoading(false);
+  //     setError("Error fetching Plans");
+  //     setTimeout(() => {
+  //       setError("");
+  //     }, [3000]);
+  //   }
+  // };
 
   return (
     <div className="w-[80%]">
       <div>
-        <div className="flex-col flex items-center justify-center">
-          <div className="p-4 w-[100%]">
-            <div className="bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
-              <SlCalender className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">
-                Study Planner
-              </h1>
+        <div>
+          <div className="flex-col flex items-center justify-center">
+            <div className=" p-4 w-[100%]">
+              <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
+                <SlCalender className="text-blue-900 text-2xl ml-4" />
+                <h1 className="text-blue-900 text-2xl font-bold ml-2">
+                  Planner
+                </h1>
+              </div>
             </div>
           </div>
           <hr className="border-blue-900 w-[95%]" />
@@ -164,6 +168,7 @@ const StudyPlanner = () => {
                 id={`subject-${index}`}
                 placeholder="Subject Name"
                 value={subject.name}
+                required
                 onChange={(e) =>
                   handleSubjectChange(index, "name", e.target.value)
                 }
@@ -234,7 +239,6 @@ const StudyPlanner = () => {
         ) : (
           <div></div>
         )}
-        {/* {error && <Alert variant="danger">{error}</Alert>} */}
       </div>
     </div>
   );

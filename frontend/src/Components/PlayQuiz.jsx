@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
@@ -18,11 +19,12 @@ const PlayQuiz = () => {
   }, [location.pathname]);
 
   const fetchQuiz = async () => {
+    setLoading(true)
     try {
       const res = await fetch(`http://10.10.11.29:8000/llm/generate_quiz?id=${id}`, {
+        method: "POST",
         headers: { "authorization": `token ${token}` }
       })
-      console.log('quiz')
       const response = await res.json();
       console.log(response)
       if (response) {
@@ -42,10 +44,17 @@ const PlayQuiz = () => {
   };
 
   const sendQuizResults = async () => {
-    const res = await fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    })
+    try {
+      console.log('quiz')
+      const res = await fetch('http://10.10.11.29:8000/quiz_report/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'authorization': `token ${token}` },
+        body: JSON.stringify({ score: currentScore })
+      })
+    } catch (err) {
+      console.log(err)
+    }
+
   };
 
   const checkCorrect = (option, ans) => {
@@ -64,43 +73,48 @@ const PlayQuiz = () => {
           <div className=" p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">Quizes</h1>
+              <h1 className="text-blue-900 text-2xl font-bold ml-2">Quizzes</h1>
             </div>
           </div>
           <hr className="border-blue-900 w-[95%] " />
         </div>
       </div>
-      {qn ? (
-        <div className="bg-blue-100 m-8 p-4 rounded-lg">
-          <h2 className="font-bold text-2xl text-blue-900 mb-4">
-            {qn?.question}
-          </h2>
-          <hr className="border-blue-900 w-[95%] " />
+      <div className="flex items-center justify-center">
 
-          <div>
-            {qn?.choices.map((option, index) => {
-              return (
-                <div key={index}>
-                  <div
-                    onClick={() => checkCorrect(option, qn.answer)}
-                    className="mt-8  cursor-pointer"
-                  >
-                    <p className="border border-slate-400 rounded-full m-2 p-3 hover:shadow-slate-300 hover:shadow-xl bg-gray-100">
-                      {option}
-                    </p>
-                  </div>
+        {
+          loading ? (<Spinner />) :
+            qn ? (
+              <div className="bg-blue-100 m-8 p-4 rounded-lg">
+                <h2 className="font-bold text-2xl text-blue-900 mb-4">
+                  {qn?.question}
+                </h2>
+                <hr className="border-blue-900 w-[95%] " />
+
+                <div>
+                  {qn?.choices.map((option, index) => {
+                    return (
+                      <div key={index}>
+                        <div
+                          onClick={() => checkCorrect(option, qn.answer)}
+                          className="mt-8  cursor-pointer"
+                        >
+                          <p className="border border-slate-400 rounded-full m-2 p-3 hover:shadow-slate-300 hover:shadow-xl bg-gray-100">
+                            {option}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : (
-        <div className="flex justify-center items-center h-[50vh]">
-          {sendQuizResults}
-          <h1 className="text-2xl font-bold">Quiz Finished!</h1>
-          <h1 className="text-2xl font-bold">{`Your Score : ${currentScore}/${quiz.length}`}</h1>
-        </div>
-      )}
+              </div>
+            ) : (
+              <div className="flex justify-center items-center h-[50vh]">
+                {sendQuizResults}
+                <h1 className="text-2xl font-bold">Quiz Finished!</h1>
+                <h1 className="text-2xl font-bold">{`Your Score : ${currentScore}/${quiz.length}`}</h1>
+              </div>
+            )}
+      </div>
       {console.log(quiz)}
     </div>
   );
