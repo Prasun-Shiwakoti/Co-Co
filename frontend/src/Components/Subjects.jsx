@@ -28,9 +28,10 @@ const Subjects = () => {
       })
       await res.json().then(response => {
         if (response.status) {
+
           setSubjects(response.data);
           setLoading(false)
-          console.log(subjects)
+          console.log(response)
         }
         else {
           setFormError(response.message);
@@ -68,7 +69,7 @@ const Subjects = () => {
       });
       await res.json().then((response) => {
         if (response.status) {
-          fetchSubjects();
+
         }
       });
     } catch (err) {

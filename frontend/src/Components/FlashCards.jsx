@@ -19,27 +19,20 @@ const FlashCards = () => {
 
   useEffect(() => {
     fetchFlashCards();
-  }, [flashCards])
+  }, [])
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch(`http://10.10.11.29:8000/flashcard?id=${id}`, {
+      const res = await fetch(`http://10.10.11.29:8000/flashcard/?id=${id}`, {
         method: 'GET',
         headers: {
           "authorization": `token ${token}`
         }
       })
-      await data.json().then((response) => {
-        if (response.status) {
-          setFlashCards(response.data)
-          setLoading(false)
-        }
-        else {
-          setError(response.message);
-          setTimeout(() => { setError('') })
-          setLoading(false);
-        }
-      })
+      const response = await res.json()
+      console.log(response)
+      setFlashCards(response)
+      setLoading(false)
     } catch (err) {
       setError(err)
       setLoading(false);

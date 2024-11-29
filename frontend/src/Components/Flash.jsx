@@ -70,7 +70,8 @@ const Flash = () => {
                                         navigate(`/flashcards/${flashcard.id}`)
                                     }}
                                 >
-                                    <Card.Title>{flashcard.subjectName}</Card.Title>
+                                    {console.log(flashcard)}
+                                    <Card.Title>{flashcard.subject.name}</Card.Title>
                                 </Card.Body>
                             </Card>))
                         }
