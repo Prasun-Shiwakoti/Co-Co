@@ -28,6 +28,7 @@ const SubPages = () => {
         headers: { "authorization": `token ${token}` },
       });
       const response = await res.json();
+      console.log(response)
       if (response.status) {
         console.log(response)
         setNote(response.data);

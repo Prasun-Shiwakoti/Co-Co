@@ -1,44 +1,12 @@
-import React, { useEffect, useState } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react"; w
 import { FaUser } from "react-icons/fa";
 import Planner from "./Planner";
 import { useNavigate } from "react-router-dom";
+import Planner from "./Planner";
 import "../index.css";
 
 const StudyPlanner = () => {
-  const [studyPlan, setStudyPlan] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchStudyPlan();
-  }, []);
-
-  const fetchStudyPlan = async () => {
-    setLoading(true);
-    try {
-      // console.log('fecth')
-      const res = await fetch("/");
-      const response = await res.json();
-      if (response.status) {
-        setStudyPlan(response.data);
-        setError("");
-        setLoading(false);
-      } else {
-        setLoading(false);
-        setError(response.message);
-        setTimeout(() => setError(""), 3000);
-      }
-    } catch (err) {
-      setLoading(false);
-      setError("Error fetching Plans");
-      setTimeout(() => {
-        setError("");
-      }, [3000]);
-    }
-  };
-
-  const backendData = [
+  const [backendData, setBackendData] = [
     [
       { sub: "History", duration: 3.05 },
       { sub: "Math", duration: 2.05 },
@@ -66,6 +34,39 @@ const StudyPlanner = () => {
     ],
     [{ sub: "Science", duration: 5 }],
   ];
+  const [studyPlan, setStudyPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchStudyPlan();
+  }, []);
+
+  const fetchStudyPlan = async () => {
+    setLoading(true);
+    try {
+      // console.log('fecth')
+      const res = await fetch("/");
+      const response = await res.json();
+      if (response.status) {
+        setBackendData(response.data);
+        setError("");
+        setLoading(false);
+      } else {
+        setLoading(false);
+        setError(response.message);
+        setTimeout(() => setError(""), 3000);
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("Error fetching Plans");
+      setTimeout(() => {
+        setError("");
+      }, [3000]);
+    }
+  };
+
+
 
   const [formData, setFormData] = useState({
     daysBeforeExam: 0,
@@ -136,6 +137,9 @@ const StudyPlanner = () => {
           </div>
         </div>
       </div>
+      {
+
+      }
       <div className="max-w-md m-8 mx-auto p-6 border border-gray-300 rounded-lg shadow-lg text-blue-900 ">
         <h2 className="text-2xl font-semibold text-center mb-4">
           Study Planner

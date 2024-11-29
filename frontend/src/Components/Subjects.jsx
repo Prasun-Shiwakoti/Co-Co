@@ -7,7 +7,7 @@ const Subjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [formError, setFormError] = useState("");
   const [modal, setModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", file: [] });
+  const [formData, setFormData] = useState({ name: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const token = localStorage.getItem("token");
@@ -65,7 +65,7 @@ const Subjects = () => {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
         headers: { "authentication": `token ${token}` },
-        body: formData,
+        body: JSON.stringify(formData),
       });
       await res.json().then((response) => {
         if (response.status) {
@@ -163,21 +163,6 @@ const Subjects = () => {
                 }
                 className="p-3 border border-slate-400  rounded-full w-[70%] bg-transparent  shadow-2xl  "
               />
-
-              <input
-                type="file"
-                multiple
-                accept="application/pdf"
-                className="ml-2"
-                id='file'
-                onChange={(e) => {
-                  setFormData({
-                    ...formData, // Spread formData correctly
-                    [e.target.id]: Array.from(e.target.files), // Update the file array
-                  });
-                }}
-              />
-
               <button
                 type="submit"
                 className="px-4 py-2 rounded-full text-blue-50 bg-green-700 hover:text-green-700 hover:bg-white transition-colors w-[70%] h-14"
