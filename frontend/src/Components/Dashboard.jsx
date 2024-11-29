@@ -4,7 +4,6 @@ import { FaUser } from "react-icons/fa";
 import Fire from "../images/fire-flame.gif";
 import Ice from "../images/freezing-cold.gif";
 import { RxDashboard } from "react-icons/rx";
-
 import {
   LineChart,
   Line,
@@ -19,76 +18,102 @@ import {
 } from "recharts";
 
 const Dashboard = () => {
-  const data = [
-    { name: "Jan", uv: 4000, pv: 2400, amt: 2400 },
-    { name: "Feb", uv: 3000, pv: 1398, amt: 2210 },
-    { name: "Mar", uv: 5000, pv: 9800, amt: 2290 },
-    { name: "Apr", uv: 2780, pv: 3908, amt: 5000 },
-    { name: "May", uv: 1890, pv: 4800, amt: 2181 },
-    { name: "Jun", uv: 2390, pv: 3800, amt: 2500 },
-    { name: "Jul", uv: 3490, pv: 4300, amt: 2100 },
-  ];
-
+  const [flashCards, setFlashCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({});
+  const [chartData, setChartData] = useState({ avgQuizScoreData: [], sessionTimeData: [] });
 
-  const [stats, setStats] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchStats();
-  }, [stats]);
+    fetchFlashCards();
+  }, []);
+
+  const fetchFlashCards = async () => {
+    try {
+      const res = await fetch(`http://10.10.11.29:8000/flashcard/`, {
+        method: "GET",
+        headers: {
+          "authorization": `token ${token}`,
+        },
+      });
+      const response = await res.json();
+      setFlashCards(response.data[0].cards);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError(err);
+      setLoading(false);
+    }
+  };
 
   const fetchStats = async () => {
     setLoading(true);
-
     try {
-      const res = await fetch("");
-      await res.json().then((response) => {
-        if (response.ok) {
-          setLoading(false);
-          setStats(response);
-        } else {
-          setLoading(false);
-          setError(response.message);
-          setTimeout(() => {
-            setError("");
-          });
-        }
+      const res = await fetch("http://10.10.11.29:8000/student/", {
+        method: "GET",
+        headers: { "authorization": `token ${token}` },
       });
+      const response = await res.json();
+      if (response.status) {
+        setLoading(false);
+        const userStats = response.data[0];
+        setStats(userStats);
+
+        // Prepare data for charts
+        const avgQuizScoreData = Object.entries(userStats.stats.avg_quiz_score).map(([date, values]) => ({
+          date,
+          average: values.average,
+        }));
+
+        const sessionTimeData = Object.entries(userStats.stats.session_time).map(([date, time]) => ({
+          date,
+          time,
+        }));
+
+        setChartData({ avgQuizScoreData, sessionTimeData });
+      } else {
+        setLoading(false);
+        setError(response.message);
+        setTimeout(() => {
+          setError(null);
+        }, 3000);
+      }
     } catch (err) {
+      console.error(err);
       setLoading(false);
       setError(err.message);
       setTimeout(() => {
-        setError("");
-      });
+        setError(null);
+      }, 3000);
     }
   };
 
   return (
-    <div className="w-[80%] h-screen ">
+    <div className="w-[80%] h-screen">
       <div>
         <div className="flex-col flex items-center justify-center">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <RxDashboard className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">
-                Dashboard
-              </h1>
+              <h1 className="text-blue-900 text-2xl font-bold ml-2">Dashboard</h1>
             </div>
           </div>
-          <hr className="border-blue-900 w-[95%] " />
+          <hr className="border-blue-900 w-[95%]" />
         </div>
       </div>
 
       <div className="flex justify-between items-start">
         <div className="m-8 flex-row flex gap-5 w-[75%]">
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
-            <p className="text-2xl font-bold">Notes:</p>
-            <h1 className="text-4xl font-bold">0</h1>
+            <p className="text-2xl font-bold">Topics:</p>
+            <h1 className="text-4xl font-bold">{stats.subjects?.length}</h1>
           </div>
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
             <p className="text-2xl font-bold">Flashcard:</p>
-            <h1 className="text-4xl font-bold">0</h1>
+            <h1 className="text-4xl font-bold">{flashCards.length}</h1>
           </div>
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
             <p className="text-2xl font-bold text-center">Quizz :</p>
@@ -101,60 +126,48 @@ const Dashboard = () => {
             Streak:
           </h1>
           <h1 className="text-4xl text-orange-600 font-bold drop-shadow-[0_2px_2px_rgba(249,115,22,0.8)]">
-            0
+            {stats.streak_count}
           </h1>
           <img src={Fire} className="w-[60px]" alt="fire icon" />
         </div>
-        {/* <div className="w-[25%] gap-2 rounded-tl-full rounded-bl-full flex h-32 items-center p-2 border-t border-l border-b bg-sky-200 mt-8 shadow-xl shadow-sky-100">
-          <h1
-            className="text-4xl text-sky-600 ml-6 font-bold drop-shadow-[0_2px_2px_rgba(135,206,235,0.8)]
-"
-          >
-            Streak:
-          </h1>
-          <h1
-            className="text-4xl text-sky-600 font-bold drop-shadow-[0_2px_2px_rgba(135,206,235,0.8)]
-"
-          >
-            -
-          </h1>
-          <img src={Ice} className="w-[60px]" alt="fire icon" />
-        </div> */}
       </div>
 
       <div>
         <div className="charts-container flex gap-8 justify-center">
+          {/* Line Chart for Average Quiz Score */}
           <div className="chart w-[45%] m-8">
-            <ResponsiveContainer
-              width="100%"
-              height={300}
-              className="border-slate-500 border rounded-lg shadow-xl pt-4"
-            >
-              <LineChart data={data}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={chartData.avgQuizScoreData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                <Line
+                  type="monotone"
+                  dataKey="average"
+                  stroke="#8884d8"
+                  activeDot={{ r: 8 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Bar Chart */}
+          {/* Bar Chart for Session Time */}
           <div className="chart w-[45%] m-8">
-            <ResponsiveContainer
-              width="100%"
-              height={300}
-              className="border-slate-500 border rounded-lg shadow-xl pt-4"
-            >
-              <BarChart data={data}>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={chartData.sessionTimeData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="uv" fill="#82ca9d" />
+                <Bar dataKey="time" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -20,7 +20,7 @@ const Flash = () => {
             const res = await fetch("http://10.10.11.29:8000/flashcard/", {
                 method: "GET",
                 headers: {
-                    authorization: `token ${token}`,
+                    "authorization": `token ${token}`,
                 },
             });
             const response = await res.json();
@@ -65,7 +65,7 @@ const Flash = () => {
                     {flashCards.map((flashcard, index) => (
                         <Card className="bg-transparent border-none flex items-center">
                             <Card.Body
-                                className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden cursor-pointer  cursor-pointer shadow-xl shadow-blue-200"
+                                className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden   cursor-pointer shadow-xl shadow-blue-200"
                                 onClick={() => {
                                     navigate(`/flashcards/${flashcard.id}`);
                                 }}
