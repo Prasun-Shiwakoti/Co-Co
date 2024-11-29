@@ -1,36 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
-import { Alert, Spinner } from "react-bootstrap"import { SlCalender } from "react-icons/sl";
+import { Alert, Spinner } from "react-bootstrap";
+import { SlCalender } from "react-icons/sl";
 const StudyPlanner = () => {
   const [studyPlan, setStudyPlan] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchStudyPlan();
-  }, [])
+  }, []);
 
   const fetchStudyPlan = async () => {
     setLoading(true);
     try {
       // console.log('fecth')
-      const res = await fetch('/');
+      const res = await fetch("/");
       const response = await res.json();
       if (response.status) {
         setStudyPlan(response.data);
-        setError('');
+        setError("");
         setLoading(false);
       } else {
-        setLoading(false)
+        setLoading(false);
         setError(response.message);
-        setTimeout(() => setError(''), 3000);
+        setTimeout(() => setError(""), 3000);
       }
     } catch (err) {
       setLoading(false);
-      setError('Error fetching Plans');
-      setTimeout(() => { setError('') }, [3000]);
+      setError("Error fetching Plans");
+      setTimeout(() => {
+        setError("");
+      }, [3000]);
     }
-  }
+  };
 
   return (
     <div className="w-[80%]">
@@ -50,16 +53,17 @@ const StudyPlanner = () => {
         </div>
       </div>
       <div className="m-8">
-        {
-          loading ? (<Spinner />) : studyPlan ? (<div>
+        {loading ? (
+          <Spinner />
+        ) : studyPlan ? (
+          <div>
             <p>No Study Plan Yet</p>
             <button>Generate</button>
-          </div>) : <div>
-
           </div>
-        }
+        ) : (
+          <div></div>
+        )}
         {error && <Alert variant="danger">{error}</Alert>}
-
       </div>
     </div>
   );
