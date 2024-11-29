@@ -22,7 +22,7 @@ const Login = () => {
         console.log(response);
         if (response.status) {
           localStorage.setItem("token", response.data.token);
-          navigate("/subjects");
+          navigate("/dashboard");
         }
       });
     } catch (err) {
