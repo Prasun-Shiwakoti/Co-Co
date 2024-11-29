@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 const Pomodoro = () => {
 
-  const [workTime, setWorkTime] = useState(1);
+  const [workTime, setWorkTime] = useState(25);
   const [restTime, setRestTime] = useState(5);
   const [isWorking, setIsWorking] = useState(true);
   const [toContinue, setToContinue] = useState(false);
