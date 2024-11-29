@@ -9,10 +9,30 @@ const Quiz = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [quizes, setQuizes] = useState([
-    { subjectName: "Science", id: "123" },
-    { subjectName: "Maths", id: "456" },
-  ]);
+  const [quizes, setQuizes] = useState([]);
+
+  const fetchQuizzes = async () => {
+    try {
+      const res = await fetch(`http://10.10.11.29:8000/quiz/`, {
+        headers: { "authorization": `token ${token}` }
+      })
+      await res.json().then(response => {
+        if (response.ok) {
+          setQuiz(response);
+          setLoading(false);
+        }
+        else {
+          setError('Error Fetching Quiz')
+          setLoading(false);
+          setTimeout(() => { setError(''), [3000] })
+        }
+      });
+    } catch (err) {
+      setError(err);
+      setLoading(false)
+      setTimeout(() => { setError(''), [3000] })
+    }
+  };
 
   return (
     <div className="w-[80%]">

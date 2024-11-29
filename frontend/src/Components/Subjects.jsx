@@ -11,6 +11,7 @@ const Subjects = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSubjects();
@@ -79,7 +80,7 @@ const Subjects = () => {
   return (
     <>
       <div className="w-[80%] h-screen relative">
-        <div className="flex-col flex items-center justify-center m-8  ">
+        <div className="flex-col flex items-center justify-center  ">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <FaUser className="text-blue-900 text-2xl ml-4" />
@@ -95,10 +96,10 @@ const Subjects = () => {
             {
               subjects.map((subject) => {
                 return (
-
                   <div className="m-8 flex justify-start w-16">
                     <div
                       className=" ml-8 flex justify-start bg-blue-100 p-4 rounded-md cursor-pointer"
+                      onClick={() => navigate(`/subjects/${subject.id}`)}
                     >
                       <div className="text-blue-900 text-4xl flex items-center">
                         <p className="text-auto">{subject.name}</p>
