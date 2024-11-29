@@ -24,7 +24,7 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "GET",
-        headers: { authorization: `token ${token}` },
+        headers: { "authorization": `token ${token}` },
       });
       await res.json().then((response) => {
         if (response.status) {

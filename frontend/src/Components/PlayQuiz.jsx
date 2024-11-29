@@ -15,7 +15,7 @@ const PlayQuiz = () => {
 
   useEffect(() => {
     fetchQuiz();
-  }, []);
+  }, [location.pathname]);
 
   const fetchQuiz = async () => {
     try {

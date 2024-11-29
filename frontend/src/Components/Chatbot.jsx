@@ -1,16 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { IoMdSend, IoMdClose } from "react-icons/io";
 
-const Chatbot = ({ close }) => {
+const Chatbot = ({ close, subjects }) => {
   const [selected, setSelected] = useState("");
-
+  const [selectedId, setSelectedId] = useState('')
+  console.log(subjects)
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const token = localStorage.getItem('token')
 
-  const handleMessageSend = () => {
+  console.log(messages)
+  const handleMessageSend = async () => {
     console.log(messages);
-    setMessages([...messages, { sender: "user", text: input }]);
+    setMessages(prev => [...prev, { sender: "user", text: input }]);
+    const res = await fetch('http://10.10.11.29:8000/llm/generate_chat/', {
+      method: 'POST',
+      headers: { "authorization": `token ${token}`, "Content-Type": "application/json", },
+      body: JSON.stringify({ prompt: input, id: selectedId })
+    })
+    const response = await res.json()
+    if (response) {
+      setMessages(prev => [...prev, { sender: "bot", text: response }])
+    }
+    console.log(response)
     setInput("");
   };
 
@@ -28,15 +41,16 @@ const Chatbot = ({ close }) => {
               {selected ? selected : "Subjects"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setSelected("Item 1")}>
-                Item 1
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setSelected("Item 2")}>
-                Item 2
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setSelected("Item 3")}>
-                Item 3
-              </Dropdown.Item>
+              {
+                subjects.map((subject) => (
+                  <Dropdown.Item onClick={() => {
+                    setSelected(subject.name)
+                    setSelectedId(subject.id)
+                  }}>
+                    {subject.name}
+                  </Dropdown.Item>))
+              }
+
             </Dropdown.Menu>
           </Dropdown>
 
@@ -46,19 +60,19 @@ const Chatbot = ({ close }) => {
             className="cursor-pointer"
           />
         </div>
-        <div className="chat-body bg-white h-[50vh] rounded-xl mt-2 mb-2 p-2 flex flex-col-reverse">
+        <div className="chat-body bg-white h-[50vh] rounded-xl mt-2 mb-2 flex flex-col gap-3 overflow-y-auto p-3">
           {messages.length > 0 ? (
             messages.map((msg, idx) => (
               <div key={idx} className="chat-message">
                 {msg.sender === "user" ? (
                   <div className=" text-white text-right">
-                    <p className="bg-blue-500 p-2 rounded-lg inline-block">
+                    <p className="bg-slate-300 p-2 rounded-lg inline-block">
                       {msg.text}
                     </p>
                   </div>
                 ) : (
                   <div className=" text-white text-left">
-                    <p className="bg-green-500 p-2 rounded-lg inline-block">
+                    <p className="bg-blue-500 p-2 rounded-lg inline-block">
                       {msg.text}
                     </p>
                   </div>

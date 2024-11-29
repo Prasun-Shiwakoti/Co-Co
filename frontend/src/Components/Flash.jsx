@@ -67,10 +67,10 @@ const Flash = () => {
                                 <Card.Body
                                     className="m-8 bg-blue-100 p-4 ml- rounded-lg h-auto max-h-[calc(1.5rem*9)] overflow-hidden cursor-pointer "
                                     onClick={() => {
-                                        navigate(`/flashcards/${flashcard.id}`)
+                                        navigate(`/flashcards/${flashcard.subject.id}`)
                                     }}
                                 >
-                                    {console.log(flashcard)}
+                                    {/* {console.log(flashcard)} */}
                                     <Card.Title>{flashcard.subject.name}</Card.Title>
                                 </Card.Body>
                             </Card>))
