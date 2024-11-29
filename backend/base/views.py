@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Student,Subject,Notes ,Quiz, Flashcard
-from llm.views import get_note, get_quiz
+from llm.views import get_note, get_quiz, get_flashcard
 from .serializers import StudentSerializer, LoginSerializer, SubjectSerializer, NotesSerializer, QuizSerializer, FlashcardSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -42,7 +42,7 @@ def UpdateStreakAPI(func):
     return wrapper
 
 class StudentAPI(APIView):
-    permission_classes=[IsAuthenticated]
+    # permission_classes=[IsAuthenticated]
     def get(self,request):
         subCode = request.GET.get("id", None)
         if not subCode:
@@ -103,18 +103,26 @@ class LoginAPI(APIView):
             })
 
 class SubjectAPI(APIView):
-    permission_classes=[IsAuthenticated]
+    # permission_classes=[IsAuthenticated]
     def get(self,request):
         subCode = request.GET.get("id", None)
+        print(request.user)
+        try:
+            student_obj = Student.objects.get(user=request.user)
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
         if not subCode:
-            queryset=Subject.objects.all()
+            queryset=Subject.objects.filter(user=student_obj)
             serializer= SubjectSerializer(queryset , many=True)
             return Response({
                 "status": True,
                 "data":serializer.data,
             })
         else:
-            queryset=Subject.objects.get(id=subCode)
+            queryset=Subject.objects.get(id=subCode, user=student_obj)
             serializer= SubjectSerializer(queryset)
             return Response({
                 "status": True,
@@ -123,6 +131,15 @@ class SubjectAPI(APIView):
         
     def post(self,request):
         data=request.data
+        try:
+            student_obj = Student.objects.get(user=request.user)
+            data["user"] = student_obj.id
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
+        
         serializer=SubjectSerializer(data=data)
         if not serializer.is_valid():
             print(serializer.data)
@@ -137,14 +154,24 @@ class SubjectAPI(APIView):
         })
 
 
-@method_decorator(UpdateStreakAPI, name='dispatch')
+@method_decorator(UpdateStreakAPI, name='get')
+@method_decorator(UpdateStreakAPI, name='post')
+@method_decorator(UpdateStreakAPI, name='put')
+@method_decorator(UpdateStreakAPI, name='delete')
 class NotesAPI(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        note_id = request.GET.get("id", None)
-        if not note_id:
-            queryset = Notes.objects.all()
+        subject_id = request.GET.get("id", None)
+        try:
+            student_obj = Student.objects.get(user=request.user)
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
+        if not subject_id:
+            queryset = Notes.objects.filter(subject__user=student_obj)
             serializer = NotesSerializer(queryset, many=True)
             return Response({
                 "status": True,
@@ -152,7 +179,7 @@ class NotesAPI(APIView):
             })
         else:
             try:
-                subject = Subject.objects.get(id=note_id)
+                subject = Subject.objects.get(id=subject_id, user=student_obj)
                 if not subject.notes.exists():
                     return get_note(request)
                     
@@ -170,6 +197,14 @@ class NotesAPI(APIView):
 
     def post(self, request):
         data = request.data
+        try:
+            student_obj = Student.objects.get(user=request.user)
+            data["user"] = student_obj.id
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
         serializer = NotesSerializer(data=data)
         if not serializer.is_valid():
             return Response({
@@ -216,9 +251,12 @@ class NotesAPI(APIView):
                 "message": "Note not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='dispatch')
+@method_decorator(UpdateStreakAPI, name='get')
+@method_decorator(UpdateStreakAPI, name='post')
+@method_decorator(UpdateStreakAPI, name='put')
+@method_decorator(UpdateStreakAPI, name='delete')
 class QuizAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         quiz_id = request.GET.get("id", None)
@@ -291,14 +329,24 @@ class QuizAPI(APIView):
                 "message": "Quiz not found",
             }, status=404)
 
-@method_decorator(UpdateStreakAPI, name='dispatch')
+@method_decorator(UpdateStreakAPI, name='get')
+@method_decorator(UpdateStreakAPI, name='post')
+@method_decorator(UpdateStreakAPI, name='put')
+@method_decorator(UpdateStreakAPI, name='delete')
 class FlashcardAPI(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        flashcard_id = request.GET.get("id", None)
-        if not flashcard_id:
-            queryset = Flashcard.objects.all()
+        subject_id = request.GET.get("id", None)
+        try:
+            student_obj = Student.objects.get(user=request.user)
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
+        if not subject_id:
+            queryset = Flashcard.objects.filter(subject__user=student_obj)
             serializer = FlashcardSerializer(queryset, many=True)
             return Response({
                 "status": True,
@@ -306,20 +354,32 @@ class FlashcardAPI(APIView):
             })
         else:
             try:
-                flashcard = Flashcard.objects.get(id=flashcard_id)
-                serializer = FlashcardSerializer(flashcard)
+                subject = Subject.objects.get(id=subject_id, user=student_obj)
+                if not subject.flashcards.exists():
+                    return get_flashcard(request)
+                    
+                serializer = NotesSerializer(subject.flashcards.all(), many=True)
                 return Response({
                     "status": True,
                     "data": serializer.data,
                 })
-            except Flashcard.DoesNotExist:
+            except Subject.DoesNotExist:
+                
                 return Response({
                     "status": False,
-                    "message": "Flashcard not found",
+                    "message": "Subject not found",
                 }, status=404)
-
+            
     def post(self, request):
         data = request.data
+        try:
+            student_obj = Student.objects.get(user=request.user)
+            data["user"] = student_obj.id
+        except Student.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "User not found",
+            }, status=404)
         serializer = FlashcardSerializer(data=data)
         if not serializer.is_valid():
             return Response({
