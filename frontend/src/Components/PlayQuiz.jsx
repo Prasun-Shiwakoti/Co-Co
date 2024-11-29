@@ -1,57 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
-const PlayQuiz = ({ id }) => {
-  const [quiz, setQuiz] = useState([
-    {
-      question: "What is the capital of France?",
-      options: [
-        { id: 1, text: "Berlin", isCorrect: false },
-        { id: 2, text: "Madrid", isCorrect: false },
-        { id: 3, text: "Paris", isCorrect: true },
-        { id: 4, text: "Rome", isCorrect: false },
-      ],
-    },
-    {
-      question: "What is the capital of Nepal?",
-      options: [
-        { id: 1, text: "Berlin", isCorrect: false },
-        { id: 2, text: "Madrid", isCorrect: false },
-        { id: 3, text: "Paris", isCorrect: true },
-        { id: 4, text: "Rome", isCorrect: false },
-      ],
-    },
-  ]);
-
+const PlayQuiz = () => {
+  const [quiz, setQuiz] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentScore, setCurrentScore] = useState(0);
   const qn = quiz[currentQuestion];
-
-  console.log(quiz, qn);
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
 
   useEffect(() => {
     fetchQuiz();
-  }, [quiz]);
+  }, []);
 
   const fetchQuiz = async () => {
     try {
-      const res = await fetch('/', {
-
+      const res = await fetch(`http://10.10.11.29:8000/llm/generate_quiz?id=${id}`, {
+        headers: { "authorization": `token ${token}` }
       })
-      await res.json().then(response => {
-        if (response.ok) {
-          setQuiz(response);
-          setLoading(false);
-        }
-        else {
-          setError('Error Fetching Quiz')
-          setLoading(false);
-          setTimeout(() => { setError(''), [3000] })
-        }
-      });
+      console.log('quiz')
+      const response = await res.json();
+      console.log(response)
+      if (response) {
+        setQuiz(response.questions);
+        setLoading(false);
+      }
+      else {
+        setError('Error Fetching Quiz')
+        setLoading(false);
+        setTimeout(() => { setError(''), [3000] })
+      }
     } catch (err) {
       setError(err);
       setLoading(false)
@@ -59,11 +41,15 @@ const PlayQuiz = ({ id }) => {
     }
   };
 
-  const sendQuizResults = () => { };
+  const sendQuizResults = async () => {
+    const res = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+  };
 
-  const checkCorrect = (bool) => {
-    console.log(bool);
-    if (bool) {
+  const checkCorrect = (option, ans) => {
+    if (option === ans) {
       setCurrentScore((prev) => prev + 1);
       console.log(currentScore);
       console.log("correct");
@@ -92,15 +78,15 @@ const PlayQuiz = ({ id }) => {
           <hr className="border-blue-900 w-[95%] " />
 
           <div>
-            {qn?.options.map((option, index) => {
+            {qn?.choices.map((option, index) => {
               return (
                 <div key={index}>
                   <div
-                    onClick={() => checkCorrect(option.isCorrect)}
+                    onClick={() => checkCorrect(option, qn.answer)}
                     className="mt-8  cursor-pointer"
                   >
                     <p className="border border-slate-400 rounded-full m-2 p-3 hover:shadow-slate-300 hover:shadow-xl bg-gray-100">
-                      {option.text}
+                      {option}
                     </p>
                   </div>
                 </div>
@@ -110,11 +96,12 @@ const PlayQuiz = ({ id }) => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-[50vh]">
-          {sendQuizResults()}
+          {sendQuizResults}
           <h1 className="text-2xl font-bold">Quiz Finished!</h1>
           <h1 className="text-2xl font-bold">{`Your Score : ${currentScore}/${quiz.length}`}</h1>
         </div>
       )}
+      {console.log(quiz)}
     </div>
   );
 };

@@ -61,7 +61,7 @@ const Sidebar = () => {
                   navigate("/subjects");
                 }}
               >
-                Subjects
+                Topics
               </button>
             </li>
             <li>
@@ -92,7 +92,7 @@ const Sidebar = () => {
                 Notes
               </button>
             </li>
-            <li>
+            {/* <li>
               <button
                 className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-200 rounded-full text-start ${
                   location.pathname === "/quiz"
@@ -103,9 +103,9 @@ const Sidebar = () => {
                   navigate("/quiz");
                 }}
               >
-                Quizes
+                Quizzes
               </button>
-            </li>
+            </li> */}
             <li>
               <button
                 className={`w-full py-2 px-4 border hover:shadow-xl hover hover:shadow-blue-200 rounded-full text-start ${

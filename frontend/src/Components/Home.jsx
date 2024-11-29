@@ -18,7 +18,7 @@ const Home = () => {
         <div className="text-left">
           <h1 className="text-7xl font-bold 0 mb-4">COCO</h1>
           <h2 className="text-3xl font-semibold mb-2">
-            Your Cognitive Companions
+            Your Cognitive Companion
           </h2>
           <p className="text-lg mb-6">
             Turn Your Notes into Knowledge <br />

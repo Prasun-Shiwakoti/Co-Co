@@ -1,0 +1,27 @@
+[
+  [
+    { "sub": "Math", "duration": 2.05 },
+    { "sub": "Science", "duration": 1.86 }
+  ],
+  [
+    { "sub": "Math", "duration": 2.57 },
+    { "sub": "Math", "duration": 1.93 }
+  ],
+  [
+    { "sub": "History", "duration": 2.74 },
+    { "sub": "English", "duration": 2.26 }
+  ],
+  [
+    { "sub": "History", "duration": 2.74 },
+    { "sub": "Geography", "duration": 2.26 }
+  ],
+  [
+    { "sub": "Geography", "duration": 2.53 },
+    { "sub": "Math", "duration": 2.47 }
+  ],
+  [
+    { "sub": "Math", "duration": 3.31 },
+    { "sub": "Science", "duration": 1.69 }
+  ],
+  [{ "sub": "Science", "duration": 5 }]
+]

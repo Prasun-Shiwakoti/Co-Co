@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import { FaUser } from "react-icons/fa";
 import Fire from "../images/fire-flame.gif";
 import Ice from "../images/freezing-cold.gif";
+import { RxDashboard } from "react-icons/rx";
+
 import {
   LineChart,
   Line,
@@ -68,7 +70,7 @@ const Dashboard = () => {
         <div className="flex-col flex items-center justify-center">
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
-              <FaUser className="text-blue-900 text-2xl ml-4" />
+              <RxDashboard className="text-blue-900 text-2xl ml-4" />
               <h1 className="text-blue-900 text-2xl font-bold ml-2">
                 Dashboard
               </h1>
@@ -89,7 +91,7 @@ const Dashboard = () => {
             <h1 className="text-4xl font-bold">0</h1>
           </div>
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
-            <p className="text-2xl font-bold">Quiz:</p>
+            <p className="text-2xl font-bold text-center">Quizz :</p>
             <h1 className="text-4xl font-bold">0</h1>
           </div>
         </div>
