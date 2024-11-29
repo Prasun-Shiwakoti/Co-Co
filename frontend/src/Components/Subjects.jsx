@@ -8,7 +8,7 @@ const Subjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [formError, setFormError] = useState("");
   const [modal, setModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", file: [] });
+  const [formData, setFormData] = useState({ name: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const token = localStorage.getItem("token");
@@ -63,8 +63,8 @@ const Subjects = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { authentication: `token ${token}` },
-        body: formData,
+        headers: { "authentication": `token ${token}` },
+        body: JSON.stringify(formData),
       });
       await res.json().then((response) => {
         if (response.status) {
@@ -171,7 +171,7 @@ const Subjects = () => {
                 multiple
                 accept="application/pdf"
                 className="ml-2"
-                id="file"
+                id='file'
                 onChange={(e) => {
                   setFormData({
                     ...formData, // Spread formData correctly

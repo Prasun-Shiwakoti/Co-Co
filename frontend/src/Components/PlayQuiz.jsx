@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 const PlayQuiz = () => {
   const [quiz, setQuiz] = useState([]);
 
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -97,7 +96,7 @@ const PlayQuiz = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-[50vh]">
-          {sendQuizResults()}
+          {sendQuizResults}
           <h1 className="text-2xl font-bold">Quiz Finished!</h1>
           <h1 className="text-2xl font-bold">{`Your Score : ${currentScore}/${quiz.length}`}</h1>
         </div>

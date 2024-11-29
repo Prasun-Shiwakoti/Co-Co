@@ -23,16 +23,16 @@ const FlashCards = () => {
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch(`http://10.10.11.29:8000/flashcard/?id=${id}`, {
-        method: "GET",
+      const res = await fetch(`http://10.10.11.29:8000/flashcard?id=${id}`, {
+        method: 'GET',
         headers: {
-          authorization: `token ${token}`,
-        },
-      });
-      const response = await res.json();
-      console.log(response);
-      setFlashCards(response);
-      setLoading(false);
+          "authorization": `token ${token}`
+        }
+      })
+      const response = await res.json()
+      console.log(response)
+      setFlashCards(response.flashcards)
+      setLoading(false)
     } catch (err) {
       setError(err);
       setLoading(false);
@@ -65,7 +65,7 @@ const FlashCards = () => {
               <div className="flashcard p-6 bg-blue-200 text-center rounded-lg w-[80%] max-w-[800px]">
                 <h3 className="text-xl font-bold">Flashcard 1</h3>
                 <p className="text-lg mt-2">
-                  {showAnswer ? card.question : card.answer}
+                  {card}
                 </p>
               </div>
             </div>
