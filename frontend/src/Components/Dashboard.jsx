@@ -128,7 +128,7 @@ const Dashboard = () => {
           <h1 className="text-4xl text-orange-600 font-bold drop-shadow-[0_2px_2px_rgba(249,115,22,0.8)]">
             {stats.streak_count}
           </h1>
-          <img src={Fire} className="w-[60px]" alt="fire icon" />
+          <img src={Fire} className="w-[60px] mb-3" alt="fire icon" />
         </div>
       </div>
 

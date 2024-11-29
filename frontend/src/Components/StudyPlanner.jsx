@@ -103,7 +103,7 @@ const StudyPlanner = () => {
               </div>
             </div>
           </div>
-          <hr className="border-blue-900 w-[95%] " />
+          <hr className="border-blue-900 w-[95%]" />
         </div>
       </div>
       <div

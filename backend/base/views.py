@@ -111,7 +111,6 @@ class SubjectAPI(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
         subCode = request.GET.get("id", None)
-        print(request.user)
         try:
             student_obj = Student.objects.get(user=request.user)
         except Student.DoesNotExist:
@@ -127,12 +126,18 @@ class SubjectAPI(APIView):
                 "data":serializer.data,
             })
         else:
-            queryset=Subject.objects.get(id=subCode, user=student_obj)
-            serializer= SubjectSerializer(queryset)
-            return Response({
-                "status": True,
-                "data":serializer.data,
-            })
+            try:
+                queryset=Subject.objects.get(id=subCode, user=student_obj)
+                serializer= SubjectSerializer(queryset)
+                return Response({
+                    "status": True,
+                    "data":serializer.data,
+                })
+            except:
+                return Response({
+                    "status": False,
+                    "message": "Subject or User not found",
+                }, status=404)
         
     def post(self,request):
         data=request.data
@@ -365,10 +370,10 @@ class FlashcardAPI(APIView):
                     flashcards = get_flashcard(request)
                 
                     flashcard_json = json.loads(flashcards.content)
-                    noteObj = Flashcard.objects.create(subject=subject, cards=flashcard_json['flashcards'])
+                    falshcardObj = Flashcard.objects.create(subject=subject, cards=flashcard_json['flashcards'])
                     return Response({
                         "status": True,
-                        "data": NotesSerializer(noteObj).data,
+                        "data": FlashcardSerializer(falshcardObj).data,
                     })
                     
                 serializer = FlashcardSerializer(subject.flashcards.all(), many=True)
@@ -501,10 +506,160 @@ class QuizReportAPI(APIView):
             "message": "Quiz stats updated successfully",
             "stats": user_stats,
         }, status=200)
+
+
+def generate_study_plan(exam_schedule, priorities, spare_days, min_hours=2, max_hours=5, min_subjects=2, max_subjects=None):
+    """
+    Generate a study plan for subjects based on priorities, exam order, and spare days.
+    
+    :param exam_schedule: List of subject names in order of exams
+    :param priorities: List of priority values (in hours)
+    :param spare_days: Total number of days available for study
+    :param min_hours: Minimum study hours per day
+    :param max_hours: Maximum study hours per day
+    :param min_subjects: Minimum number of subjects to study per day
+    :param max_subjects: Maximum number of subjects to study per day (None for no limit)
+    :return: Study plan as a list of daily plans
+    """
+    # Ensure we have enough spare days
+    if spare_days < 1:
+        raise ValueError("Spare days must be at least 1")
+    
+    # Normalize priorities if needed
+    if len(priorities) != len(exam_schedule):
+        priorities = [1] * len(exam_schedule)
+    
+    # Calculate days until exam for each subject, with safety for fewer spare days
+    days_until_exam = [max(1, spare_days - i) for i in range(len(exam_schedule))]
+    
+    # Adjust priorities based on days until exam
+    # Subjects with closer exams get higher weight
+    adjusted_priorities = [
+        (p * (1 + ((spare_days+len(exam_schedule)) - d + 1)/(spare_days+len(exam_schedule)))) 
+        for p, d in zip(priorities, range(spare_days, spare_days+len(priorities)+1))
+    ]
+    
+    # Calculate hours needed per subject based on adjusted priorities
+    total_priority = sum(adjusted_priorities)
+    total_available_hours = spare_days * max_hours
+    hour_per_subject = [
+        (p * total_available_hours) / total_priority 
+        for p in adjusted_priorities
+    ]
+
+    # Create a list of subjects with required hours and days until exam
+    subjects = [
+        {
+            "sub": exam_schedule[i],
+            "hours": hour_per_subject[i],
+            "days_left": days_until_exam[i],
+            "daily_min": hour_per_subject[i] / spare_days  # Minimum hours needed per day
+        } 
+        for i in range(len(exam_schedule))
+    ]
+    # Initialize study plan
+    study_plan = [[] for _ in range(spare_days)]
+    
+    # Process each day
+    for day in range(spare_days):
+        remaining_hours = max_hours  # Start with max hours for the day
+        daily_subjects_count = 0
         
+        # Update days left and sort subjects
+        for subject in subjects:
+            subject['days_left'] = max(0, subject['days_left'] - 1)
+        
+        # Sort subjects by (1) days left and (2) remaining hours (descending)
+        subjects.sort(key=lambda x: (x['days_left'], -x['hours']))
+        
+        # Prepare to select subjects from the end (last-first manner)
+        available_subjects = subjects.copy()
+        
+        # Allocate subjects for the day
+        while (remaining_hours > 0 and 
+               available_subjects and 
+               (max_subjects is None or daily_subjects_count < max_subjects) and 
+               daily_subjects_count < min_subjects):
+            
+            # Get the most urgent subject from the end
+            current_subject = available_subjects.pop()
+            
+            # Calculate hours to allocate today
+            if current_subject['days_left'] > 0:
+                hours_today = min(
+                    remaining_hours,
+                    current_subject['hours'] / current_subject['days_left'],
+                    max_hours - sum(task.get('duration', 0) for task in study_plan[day])
+                )
+            else:
+                # If it's the last day for this subject
+                hours_today = min(
+                    remaining_hours,
+                    current_subject['hours'],
+                    # max_hours - sum(task.get('duration', 0) for task in study_plan[day])
+                )
+            
+            # We apply this to ensure student reads for a minimum of `min`(1) hours
+            if hours_today < min_hours/2:
+                continue
+                
+            # Add to daily plan
+            study_plan[day].append({
+                "sub": current_subject['sub'],
+                "duration": round(hours_today, 2)
+            })
+            
+            # Update remaining hours and subject hours
+            remaining_hours -= hours_today
+            current_subject['hours'] -= hours_today
+            daily_subjects_count += 1
+            
+            # Remove subject if completed
+            if current_subject['hours'] <= 0:
+                subjects = [s for s in subjects if s['sub'] != current_subject['sub']]
+            else:
+                # Put the subject back in the original list
+                subjects.append(current_subject)
+                # Re-sort the list
+                subjects.sort(key=lambda x: (x['days_left'], -x['hours']))
+
+    return study_plan
+
+     
+
 @csrf_exempt
-def generate_study_plan(request):
-    pass
+def generate_study_plan_api(request):
+    # Example usage
+    print("Generating study plan...")
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        exam_schedule = data.get("exam_schedule", None)
+        spare_days = data.get("spare_days", None)
+
+        if not (exam_schedule and spare_days):
+            return Response({
+                "status": False,
+                "message": "Invalid request. Please provide exam_schedule and spare_days in the request body.",
+            }, status=400)
+        
+        priorities = exam_schedule.values()
+        exam_schedule = exam_schedule.keys()
+
+        study_plan = generate_study_plan(
+            exam_schedule, 
+            priorities, 
+            spare_days, 
+            min_subjects=2,  
+            max_subjects=3   
+        )
+        return Response({
+            "status": True,
+            "data": study_plan,
+        }, status=200)
+    return Response({
+        "status": False,
+        "message": "Invalid request method. Please use POST method to generate study plan.",
+    }, status=400)
 
 def home(request):
     return HttpResponse("HOME PAGE")
