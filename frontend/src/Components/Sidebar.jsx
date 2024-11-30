@@ -92,20 +92,6 @@ const Sidebar = () => {
             </div>
           </div>
           <ul className="mt-12 w-3/4 flex flex-col gap-4  ">
-            <li className=" text-start">
-              <button
-                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${
-                  location.pathname === "/subjects"
-                    ? "bg-blue-900 text-blue-50"
-                    : " bg-white text-blue-900"
-                }`}
-                onClick={() => {
-                  navigate("/subjects");
-                }}
-              >
-                Topics
-              </button>
-            </li>
             <li>
               <button
                 className={`w-full py-2 px-4 border rounded-full  hover:shadow-xl  hover:shadow-blue-200 text-start ${
@@ -120,6 +106,21 @@ const Sidebar = () => {
                 Dashboard
               </button>
             </li>
+            <li className=" text-start">
+              <button
+                className={`w-full py-2 px-4 border-blue-900 rounded-full hover:shadow-xl hover:shadow-blue-200  text-start ${
+                  location.pathname === "/subjects"
+                    ? "bg-blue-900 text-blue-50"
+                    : " bg-white text-blue-900"
+                }`}
+                onClick={() => {
+                  navigate("/subjects");
+                }}
+              >
+                Topics
+              </button>
+            </li>
+
             <li>
               <button
                 className={`w-full py-2 px-4 border hover:shadow-xl  hover:shadow-blue-200 rounded-full text-start ${

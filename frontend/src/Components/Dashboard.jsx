@@ -22,7 +22,10 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({});
-  const [chartData, setChartData] = useState({ avgQuizScoreData: [], sessionTimeData: [] });
+  const [chartData, setChartData] = useState({
+    avgQuizScoreData: [],
+    sessionTimeData: [],
+  });
 
   const token = localStorage.getItem("token");
 
@@ -36,7 +39,7 @@ const Dashboard = () => {
       const res = await fetch(`http://10.10.11.29:8000/flashcard/`, {
         method: "GET",
         headers: {
-          "authorization": `token ${token}`,
+          authorization: `token ${token}`,
         },
       });
       const response = await res.json();
@@ -54,7 +57,7 @@ const Dashboard = () => {
     try {
       const res = await fetch("http://10.10.11.29:8000/student/", {
         method: "GET",
-        headers: { "authorization": `token ${token}` },
+        headers: { authorization: `token ${token}` },
       });
       const response = await res.json();
       if (response.status) {
@@ -63,12 +66,16 @@ const Dashboard = () => {
         setStats(userStats);
 
         // Prepare data for charts
-        const avgQuizScoreData = Object.entries(userStats.stats.avg_quiz_score).map(([date, values]) => ({
+        const avgQuizScoreData = Object.entries(
+          userStats.stats.avg_quiz_score
+        ).map(([date, values]) => ({
           date,
           average: values.average,
         }));
 
-        const sessionTimeData = Object.entries(userStats.stats.session_time).map(([date, time]) => ({
+        const sessionTimeData = Object.entries(
+          userStats.stats.session_time
+        ).map(([date, time]) => ({
           date,
           time,
         }));
@@ -98,7 +105,9 @@ const Dashboard = () => {
           <div className="flex-1 flex flex-col p-4 w-[100%]">
             <div className=" bg-blue-100 flex gap-1 items-center rounded-full w-[90%] h-[10vh]">
               <RxDashboard className="text-blue-900 text-2xl ml-4" />
-              <h1 className="text-blue-900 text-2xl font-bold ml-2">Dashboard</h1>
+              <h1 className="text-blue-900 text-2xl font-bold ml-2">
+                Dashboard
+              </h1>
             </div>
           </div>
           <hr className="border-blue-900 w-[95%]" />
@@ -117,7 +126,9 @@ const Dashboard = () => {
           </div>
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
             <p className="text-2xl font-bold text-center">Quizz :</p>
-            <h1 className="text-4xl font-bold">{chartData.avgQuizScoreData.length}</h1>
+            <h1 className="text-4xl font-bold">
+              {chartData.avgQuizScoreData.length}
+            </h1>
           </div>
         </div>
 
@@ -136,7 +147,11 @@ const Dashboard = () => {
         <div className="charts-container flex gap-8 justify-center">
           {/* Line Chart for Average Quiz Score */}
           <div className="chart w-[45%] m-8">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer
+              width="100%"
+              height={300}
+              className="border-slate-500 border rounded-lg shadow-xl pt-4"
+            >
               <LineChart
                 data={chartData.avgQuizScoreData}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -158,7 +173,11 @@ const Dashboard = () => {
 
           {/* Bar Chart for Session Time */}
           <div className="chart w-[45%] m-8">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer
+              width="100%"
+              height={300}
+              className="border-slate-500 border rounded-lg shadow-xl pt-4"
+            >
               <BarChart
                 data={chartData.sessionTimeData}
                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -167,7 +186,7 @@ const Dashboard = () => {
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="time" fill="#8884d8" />
+                <Bar dataKey="time" fill="#82ca9d" />
               </BarChart>
             </ResponsiveContainer>
           </div>
