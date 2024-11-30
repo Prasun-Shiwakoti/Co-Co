@@ -18,45 +18,32 @@ const Subjects = () => {
     fetchSubjects();
   }, []);
 
-  // fecth the subjects
-
   const fetchSubjects = async () => {
     setLoading(true);
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "GET",
-        headers: { "authorization": `token ${token}` },
+        headers: { authorization: `token ${token}` },
       });
-      await res.json().then((response) => {
-        if (response.status) {
-          setSubjects(response.data);
-          setLoading(false);
-          console.log(response);
-        } else {
-          setFormError(response.message);
-          setLoading(false);
-        }
-      });
+      const response = await res.json();
+      if (response.status) {
+        setSubjects(response.data);
+      } else {
+        setFormError(response.message);
+      }
     } catch (err) {
       setError("Error fetching subject");
-      setTimeout(() => {
-        setError("");
-      }, [3000]);
+      setTimeout(() => setError(""), 3000);
+    } finally {
       setLoading(false);
     }
   };
 
-  //submit new subject
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-
-    if (formData.file.length === 0) {
+    if (!formData.file?.length) {
       setFormError("Please add a file");
-      setTimeout(() => {
-        setFormError("");
-      }, [3000]);
+      setTimeout(() => setFormError(""), 3000);
       return;
     }
 
@@ -66,16 +53,16 @@ const Subjects = () => {
         headers: { authentication: `token ${token}` },
         body: JSON.stringify(formData),
       });
-      await res.json().then((response) => {
-        if (response.status) {
-        }
-      });
+      const response = await res.json();
+      if (response.status) {
+        setModal(false);
+        fetchSubjects();
+      }
     } catch (err) {
-      setFormError(err);
+      setFormError(err.message);
     }
   };
 
-  //loader
   return (
     <>
       <div className="w-[80%] h-screen relative">
@@ -93,29 +80,28 @@ const Subjects = () => {
           <Spinner variant="primary" className="absolute left-[50%] mt-4" />
         ) : (
           <div className="flex gap-4 flex-wrap">
-            {/* Render subjects */}
-            {subjects.map((subject) => {
-              return (
-                <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200">
-                  <div
-                    className="flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
-                    onClick={() => navigate(`/subjects/${subject.id}`)}
-                  >
-                    <div className="text-blue-900 text-4xl text-center ">
-                      {subject.name}
-                    </div>
+            {subjects.map((subject) => (
+              <div
+                key={subject.id}
+                className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200 h-[10vh]"
+              >
+                <div
+                  className="flex justify-center items-center bg-blue-100 p-4 rounded-md w-full h-full cursor-pointer"
+                  onClick={() => navigate(`/subjects/${subject.id}`)}
+                >
+                  <div className="text-blue-900 text-4xl text-center">
+                    {subject.name}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
 
-            {/* "+" button to add a subject */}
-            <div className=" flex justify-start w-[20vw] ">
+            <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200 h-[10vh]">
               <div
-                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md  w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
+                className="flex justify-center items-center bg-blue-100 p-4 rounded-md w-full h-full cursor-pointer"
                 onClick={() => setModal(true)}
               >
-                <div className="text-blue-900 text-4xl flex justify-center items-center text-center ">
+                <div className="text-blue-900 text-4xl flex justify-center items-center text-center h-full w-full">
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                     +
                   </div>
@@ -151,7 +137,7 @@ const Subjects = () => {
 
           <Modal.Body className="p-3 flex flex-col justify-center items-center h-full bg-blue-50">
             <form
-              className="flex flex-col items-center gap-4 w-full "
+              className="flex flex-col items-center gap-4 w-full"
               onSubmit={handleSubmit}
             >
               <input
@@ -163,7 +149,7 @@ const Subjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, [e.target.id]: e.target.value })
                 }
-                className="p-3 border border-slate-400  rounded-full w-[70%] bg-transparent  shadow-2xl  "
+                className="p-3 border border-slate-400 rounded-full w-[70%] bg-transparent shadow-2xl"
               />
 
               <input
@@ -172,12 +158,12 @@ const Subjects = () => {
                 accept="application/pdf"
                 className="ml-2"
                 id="file"
-                onChange={(e) => {
+                onChange={(e) =>
                   setFormData({
-                    ...formData, // Spread formData correctly
-                    [e.target.id]: Array.from(e.target.files), // Update the file array
-                  });
-                }}
+                    ...formData,
+                    [e.target.id]: Array.from(e.target.files),
+                  })
+                }
               />
 
               <button
