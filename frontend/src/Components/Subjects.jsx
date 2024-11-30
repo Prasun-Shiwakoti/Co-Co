@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { Modal, Button, Spinner, Alert, Card } from "react-bootstrap";
+import { Modal, Button, Spinner, Alert } from "react-bootstrap";
 import { HiMenuAlt2 } from "react-icons/hi";
 
 const Subjects = () => {
@@ -18,6 +17,7 @@ const Subjects = () => {
     fetchSubjects();
   }, []);
 
+  // Fetch the subjects
   const fetchSubjects = async () => {
     setLoading(true);
     try {
@@ -28,37 +28,42 @@ const Subjects = () => {
       const response = await res.json();
       if (response.status) {
         setSubjects(response.data);
+        setLoading(false);
       } else {
         setFormError(response.message);
+        setLoading(false);
       }
     } catch (err) {
       setError("Error fetching subject");
-      setTimeout(() => setError(""), 3000);
-    } finally {
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       setLoading(false);
     }
   };
 
+  // Submit new subject
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.file?.length) {
-      setFormError("Please add a file");
-      setTimeout(() => setFormError(""), 3000);
-      return;
-    }
 
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { authentication: `token ${token}` },
+        headers: {
+          authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
       const response = await res.json();
       if (response.status) {
         setModal(false);
         fetchSubjects();
+      } else {
+        setFormError(response.message);
       }
     } catch (err) {
+      setFormError(err.message);
       setFormError(err.message);
     }
   };
@@ -95,7 +100,11 @@ const Subjects = () => {
                 </div>
               </div>
             ))}
+              </div>
+            ))}
 
+            {/* "+" button to add a subject */}
+            <div className="flex justify-start w-[20vw]">
             <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200 h-[10vh]">
               <div
                 className="flex justify-center items-center bg-blue-100 p-4 rounded-md w-full h-full cursor-pointer"
@@ -150,20 +159,6 @@ const Subjects = () => {
                   setFormData({ ...formData, [e.target.id]: e.target.value })
                 }
                 className="p-3 border border-slate-400 rounded-full w-[70%] bg-transparent shadow-2xl"
-              />
-
-              <input
-                type="file"
-                multiple
-                accept="application/pdf"
-                className="ml-2"
-                id="file"
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    [e.target.id]: Array.from(e.target.files),
-                  })
-                }
               />
 
               <button
