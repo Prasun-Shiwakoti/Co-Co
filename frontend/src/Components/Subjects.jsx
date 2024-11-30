@@ -64,7 +64,6 @@ const Subjects = () => {
       }
     } catch (err) {
       setFormError(err.message);
-      setFormError(err.message);
     }
   };
 
@@ -100,11 +99,8 @@ const Subjects = () => {
                 </div>
               </div>
             ))}
-              </div>
-            ))}
 
             {/* "+" button to add a subject */}
-            <div className="flex justify-start w-[20vw]">
             <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200 h-[10vh]">
               <div
                 className="flex justify-center items-center bg-blue-100 p-4 rounded-md w-full h-full cursor-pointer"
