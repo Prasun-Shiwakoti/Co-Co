@@ -19,7 +19,7 @@ const PlayQuiz = () => {
   }, []);
 
   useEffect(() => {
-    if (currentQuestion === quiz.length && !resultsSent) {
+    if (currentQuestion === quiz.length && !resultsSent && currentQuestion) {
       sendQuizResults();
     }
   }, [currentQuestion, quiz.length, resultsSent]); // Trigger only when quiz finishes

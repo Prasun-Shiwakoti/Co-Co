@@ -25,7 +25,7 @@ const SubPages = () => {
     try {
       const res = await fetch(`http://10.10.11.29:8000/note?id=${id}`, {
         method: "GET",
-        headers: { authorization: `token ${token}` },
+        headers: { "authorization": `token ${token}` },
       });
       const response = await res.json();
       console.log(response)
@@ -68,9 +68,6 @@ const SubPages = () => {
 
     const formData = new FormData();
     formData.append("pdf", file);
-
-    setLoading(true);
-
     try {
       const response = await fetch(
         `http://10.10.11.29:8000/llm/pdf_upload/?id=${id}`,
@@ -83,9 +80,10 @@ const SubPages = () => {
 
       const result = await response.json();
       console.log(result);
-      if (result.ok) {
+      if (result.status === "success") {
         setMessage("File uploaded successfully!");
         setFile(null);
+        fetchNotes();
       } else {
         setError(`${result.message}`);
       }
@@ -96,7 +94,7 @@ const SubPages = () => {
       setModal(false);
     }
   };
-
+  console.log(note)
   return (
     <div className="w-[80%] h-screen relative">
       <div className="flex-col flex items-center justify-center">
@@ -132,12 +130,15 @@ const SubPages = () => {
         </div>
 
         {/* Add PDF */}
-        <div
-          className="bg-blue-100 p-4 rounded-lg mt-8 ml-8 cursor-pointer shadow-xl shadow-blue-200 w-[20%] h-auto flex justify-center items-center"
-          onClick={() => setModal(true)}
-        >
-          <h2 className="text-center text-2xl">Add PDF</h2>
-        </div>
+        {
+          note[0]?.subject ? "" : (<div
+            className="bg-blue-100 p-4 rounded-lg mt-8 ml-8 cursor-pointer shadow-xl shadow-blue-200 w-[20%] h-auto flex justify-center items-center"
+            onClick={() => setModal(true)}
+          >
+            <h2 className="text-center text-2xl">Add PDF</h2>
+          </div>)
+        }
+
       </div>
 
       {modal && (
@@ -168,9 +169,6 @@ const SubPages = () => {
           </Modal.Footer>
         </Modal>
       )}
-
-      {message && <Alert variant="success">{message}</Alert>}
-      {error && <Alert variant="danger">{error}</Alert>}
     </div>
   );
 };

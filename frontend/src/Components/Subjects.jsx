@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { Modal, Button, Spinner, Alert, Card } from "react-bootstrap";
+import { Modal, Button, Spinner, Alert } from "react-bootstrap";
 import { HiMenuAlt2 } from "react-icons/hi";
 
 const Subjects = () => {
@@ -18,64 +17,56 @@ const Subjects = () => {
     fetchSubjects();
   }, []);
 
-  // fecth the subjects
-
+  // Fetch the subjects
   const fetchSubjects = async () => {
     setLoading(true);
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "GET",
-        headers: { "authorization": `token ${token}` },
+        headers: { authorization: `token ${token}` },
       });
-      await res.json().then((response) => {
-        if (response.status) {
-          setSubjects(response.data);
-          setLoading(false);
-          console.log(response);
-        } else {
-          setFormError(response.message);
-          setLoading(false);
-        }
-      });
+      const response = await res.json();
+      if (response.status) {
+        setSubjects(response.data);
+        setLoading(false);
+      } else {
+        setFormError(response.message);
+        setLoading(false);
+      }
     } catch (err) {
       setError("Error fetching subject");
       setTimeout(() => {
         setError("");
-      }, [3000]);
+      }, 3000);
       setLoading(false);
     }
   };
 
-  //submit new subject
-
+  // Submit new subject
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-
-    if (formData.file.length === 0) {
-      setFormError("Please add a file");
-      setTimeout(() => {
-        setFormError("");
-      }, [3000]);
-      return;
-    }
 
     try {
       const res = await fetch("http://10.10.11.29:8000/subject/", {
         method: "POST",
-        headers: { authentication: `token ${token}` },
+        headers: {
+          authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
-      await res.json().then((response) => {
-        if (response.status) {
-        }
-      });
+      const response = await res.json();
+      if (response.status) {
+        setModal(false);
+        fetchSubjects();
+      } else {
+        setFormError(response.message);
+      }
     } catch (err) {
-      setFormError(err);
+      setFormError(err.message);
     }
   };
 
-  //loader
   return (
     <>
       <div className="w-[80%] h-screen relative">
@@ -94,28 +85,29 @@ const Subjects = () => {
         ) : (
           <div className="flex gap-4 flex-wrap">
             {/* Render subjects */}
-            {subjects.map((subject) => {
-              return (
-                <div className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200">
-                  <div
-                    className="flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
-                    onClick={() => navigate(`/subjects/${subject.id}`)}
-                  >
-                    <div className="text-blue-900 text-4xl text-center ">
-                      {subject.name}
-                    </div>
+            {subjects.map((subject) => (
+              <div
+                key={subject.id}
+                className="m-8 flex justify-start w-[20vw] cursor-pointer shadow-xl shadow-blue-200"
+              >
+                <div
+                  className="flex justify-center items-center bg-blue-100 p-4 rounded-md cursor-pointer w-full h-full"
+                  onClick={() => navigate(`/subjects/${subject.id}`)}
+                >
+                  <div className="text-blue-900 text-4xl text-center">
+                    {subject.name}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
 
             {/* "+" button to add a subject */}
-            <div className=" flex justify-start w-[20vw] ">
+            <div className="flex justify-start w-[20vw]">
               <div
-                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md  w-full h-full  cursor-pointer shadow-xl shadow-blue-200"
+                className="ml-8 flex justify-center items-center bg-blue-100 p-4 rounded-md w-full h-full cursor-pointer shadow-xl shadow-blue-200"
                 onClick={() => setModal(true)}
               >
-                <div className="text-blue-900 text-4xl flex justify-center items-center text-center ">
+                <div className="text-blue-900 text-4xl flex justify-center items-center text-center">
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                     +
                   </div>
@@ -151,7 +143,7 @@ const Subjects = () => {
 
           <Modal.Body className="p-3 flex flex-col justify-center items-center h-full bg-blue-50">
             <form
-              className="flex flex-col items-center gap-4 w-full "
+              className="flex flex-col items-center gap-4 w-full"
               onSubmit={handleSubmit}
             >
               <input
@@ -163,21 +155,7 @@ const Subjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, [e.target.id]: e.target.value })
                 }
-                className="p-3 border border-slate-400  rounded-full w-[70%] bg-transparent  shadow-2xl  "
-              />
-
-              <input
-                type="file"
-                multiple
-                accept="application/pdf"
-                className="ml-2"
-                id="file"
-                onChange={(e) => {
-                  setFormData({
-                    ...formData, // Spread formData correctly
-                    [e.target.id]: Array.from(e.target.files), // Update the file array
-                  });
-                }}
+                className="p-3 border border-slate-400 rounded-full w-[70%] bg-transparent shadow-2xl"
               />
 
               <button
