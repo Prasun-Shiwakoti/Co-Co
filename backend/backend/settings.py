@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-e=^ivuv&tlfp&ii-e-f)n2n&+))%0@rs9!gg)qun0$8rx%6#q(
 DEBUG = True
 
 ALLOWED_HOSTS = ["*", "localhost"]
-
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'llm.apps.LlmConfig',
 ]
 MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

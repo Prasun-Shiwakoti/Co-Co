@@ -23,7 +23,7 @@ const SubPages = () => {
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://10.10.11.29:8000/note?id=${id}`, {
+      const res = await fetch(`http://10.10.11.29:8000/note/?id=${id}`, {
         method: "GET",
         headers: { "authorization": `token ${token}` },
       });
@@ -68,6 +68,7 @@ const SubPages = () => {
 
     const formData = new FormData();
     formData.append("pdf", file);
+    setLoading(true);
     try {
       const response = await fetch(
         `http://10.10.11.29:8000/llm/pdf_upload/?id=${id}`,
@@ -83,7 +84,7 @@ const SubPages = () => {
       if (result.status === "success") {
         setMessage("File uploaded successfully!");
         setFile(null);
-        fetchNotes();
+        window.location.reload();
       } else {
         setError(`${result.message}`);
       }

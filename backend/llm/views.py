@@ -36,7 +36,11 @@ def get_note(request):
                 context = ""
                 for pdf in pdfs:
                     context += pdf.text_content
+                if not context:
+                    print("No subject")
+                    return JsonResponse({'error': 'PDF not uploaded for this subject'}, status=400)
                 notes = generate_notes(context)
+                print('\n\nAI NOTE', notes)
                 return JsonResponse(notes, status=200)
             except Exception as e:
                 return JsonResponse({'error': 'Invalid Subject Code'}, status=400)
@@ -197,11 +201,12 @@ def pdf_upload(request):
         
         for url in image_urls:
             extracted_text += extract_text_from_image(url)
-        
-        if len(extracted_text) >= 4096:
+        print(len(extracted_text))
+        if len(extracted_text) >= 40960000000:
             summarized_text = summarize_text(extracted_text)
         else:
             summarized_text = extracted_text
+        
         print("Summarized:\t\t\t", summarized_text)
         try:
             try:

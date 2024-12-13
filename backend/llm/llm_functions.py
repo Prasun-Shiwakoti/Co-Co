@@ -9,7 +9,7 @@ import requests
 # Define the API Key and ImgBB upload endpoint
 IMGBB_API_KEY = '22b2b02f510a75b10a767f5c2bc62eea'  # Replace with your API key
 IMGBB_UPLOAD_URL = 'https://api.imgbb.com/1/upload'
-HUGGINGFACE_API_KEY = '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'
+HUGGINGFACE_API_KEY = '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'
 
 client = InferenceClient(api_key=HUGGINGFACE_API_KEY)
 
@@ -151,7 +151,11 @@ def generate_chat(context, prompt):
     messages = [
         {
             "role": "system",
-            "content": """You are a helpful AI assistant. Be conversational and friendly. Reply based on the context provided as long as it contains required information else use your own knowledge to generate a response."""
+            "content": """You are a helpful AI assistant. Be conversational and friendly. Reply based on the context provided as long as it contains required information else use your own knowledge to generate a response.
+            Requirements: 
+            1. Respond in short and be concise.
+            2. Try to respond in 2-3 sentences as far as practical.
+            """
         },
         
         {

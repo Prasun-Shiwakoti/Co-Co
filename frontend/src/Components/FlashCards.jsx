@@ -23,7 +23,7 @@ const FlashCards = () => {
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch(`http://10.10.11.29:8000/flashcard?id=${id}`, {
+      const res = await fetch(`http://10.10.11.29:8000/flashcard/?id=${id}`, {
         method: "GET",
         headers: {
           authorization: `token ${token}`,
@@ -65,7 +65,7 @@ const FlashCards = () => {
             >
               <div className="flashcard p-6 bg-blue-200 text-center rounded-lg w-[80%] max-w-[800px]">
                 <h3 className="text-xl font-bold">Flashcard 1</h3>
-                <p className="text-lg mt-2">{card}</p>
+                <p className="text-lg mt-2">{JSON.stringify(card)}</p>
               </div>
             </div>
           </Carousel.Item>

@@ -51,7 +51,7 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
+  let totalQuizSum = 0;
   const fetchStats = async () => {
     setLoading(true);
     try {
@@ -71,8 +71,9 @@ const Dashboard = () => {
         ).map(([date, values]) => ({
           date,
           average: values.average,
+          total: values.total,
         }));
-
+        
         const sessionTimeData = Object.entries(
           userStats.stats.session_time
         ).map(([date, time]) => ({
@@ -96,7 +97,12 @@ const Dashboard = () => {
         setError(null);
       }, 3000);
     }
+    
   };
+
+  for (let i = 0; i < chartData.avgQuizScoreData.length; i++) {
+    totalQuizSum += Number(chartData.avgQuizScoreData[i].total);
+  }
   return (
     <div className="w-[80%] h-screen">
       <div>
@@ -126,7 +132,7 @@ const Dashboard = () => {
           <div className="w-[25%] rounded-xl bg-transparent flex flex-col items-center p-4 shadow-xl">
             <p className="text-2xl font-bold text-center">Quizz :</p>
             <h1 className="text-4xl font-bold">
-              {chartData.avgQuizScoreData.length}
+              {totalQuizSum}
             </h1>
           </div>
         </div>

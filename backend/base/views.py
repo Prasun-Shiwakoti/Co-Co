@@ -37,11 +37,11 @@ def UpdateStreakAPI(func):
             # Get today's date and check the last streak update date
             today = datetime.now().date()
             last_activity_date = profile.last_activity_date
-
+            print(last_activity_date, today)
             if last_activity_date < today:  # Only update streak if it's a new day
                 # If the user hasn't updated streak for today, reset streak if necessary
-                
-                if last_activity_date == today - timedelta(days=1):
+
+                if last_activity_date <= today - timedelta(days=1):
                     profile.stats['streak'] = 1  # Reset streak if it's not consecutive days
                 else:
                     profile.stats['streak'] += 1  # Increment streak for consecutive days
@@ -178,7 +178,8 @@ class SubjectAPI(APIView):
 
 @method_decorator(UpdateStreakAPI, name='dispatch')
 class NotesAPI(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    print("NotesAPI")
 
     def get(self, request):
         subject_id = request.GET.get("id", None)
@@ -200,11 +201,17 @@ class NotesAPI(APIView):
             try:
                 subject = Subject.objects.get(id=subject_id, user=student_obj)
                 if not subject.notes.exists():
+                    print("MAAKING ")
                     notes = get_note(request)
                     
 
                     # Step 2: Parse the JSON string into a Python dictionary
                     notes_json = json.loads(notes.content)
+                    if notes_json.get('error', None):
+                        return Response({
+                            "status": False,
+                            "message": notes_json['error'],
+                        }, status=400)
                     noteObj = Notes.objects.create(subject=subject, content=notes_json['notes'])
                     return Response({
                         "status": True,
@@ -470,7 +477,7 @@ class QuizReportAPI(APIView):
                 "status": False,
                 "message": "User not found",
             }, status=404)
-        
+        print(data)
         # Get the quiz score and current date
         score = data.get("score", 0)
         today = datetime.now().strftime("%Y-%m-%d")
@@ -480,11 +487,6 @@ class QuizReportAPI(APIView):
         
         # --- Update streak ---
         avg_quiz_score = user_stats.get("avg_quiz_score", {})
-
-        # Check the last quiz date
-        if avg_quiz_score:
-            last_quiz_date = max(avg_quiz_score.keys())
-            last_quiz_date_obj = datetime.strptime(last_quiz_date, "%Y-%m-%d")
 
         # --- Update average quiz score ---
         if today not in avg_quiz_score:
@@ -497,7 +499,7 @@ class QuizReportAPI(APIView):
         avg_quiz_score_today["average"] = avg_quiz_score_today["score"] / avg_quiz_score_today["total"]
 
         user_stats["avg_quiz_score"] = avg_quiz_score
-
+        print(user_stats)
         # --- Save updated stats back to the database ---
         student_obj.stats = user_stats
         student_obj.save()
