@@ -21,7 +21,7 @@ const Subjects = () => {
   const fetchSubjects = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://10.10.11.29:8000/subject/", {
+      const res = await fetch("http://localhost:8000/subject/", {
         method: "GET",
         headers: { authorization: `token ${token}` },
       });
@@ -47,7 +47,7 @@ const Subjects = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://10.10.11.29:8000/subject/", {
+      const res = await fetch("http://localhost:8000/subject/", {
         method: "POST",
         headers: {
           authorization: `token ${token}`,

@@ -23,7 +23,7 @@ const SubPages = () => {
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://10.10.11.29:8000/note/?id=${id}`, {
+      const res = await fetch(`http://localhost:8000/note/?id=${id}`, {
         method: "GET",
         headers: { "authorization": `token ${token}` },
       });
@@ -71,7 +71,7 @@ const SubPages = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://10.10.11.29:8000/llm/pdf_upload/?id=${id}`,
+        `http://localhost:8000/llm/pdf_upload/?id=${id}`,
         {
           method: "POST",
           headers: { authorization: `token ${token}` },

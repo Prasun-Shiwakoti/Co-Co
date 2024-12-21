@@ -60,7 +60,7 @@ const StudyPlanner = () => {
     setFormData(data);
 
     // Log the form data (you can send it to backend or process it further)
-    const res = await fetch('http://10.10.11.29:8000/generate_study_plan/', {
+    const res = await fetch('http://localhost:8000/generate_study_plan/', {
       method: 'POST',
       headers: { "authorization": `token ${token}`, "Content-Type": "application/json", },
       body: JSON.stringify(data),

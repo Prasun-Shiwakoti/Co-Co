@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch(`http://10.10.11.29:8000/flashcard/`, {
+      const res = await fetch(`http://localhost:8000/flashcard/`, {
         method: "GET",
         headers: {
           authorization: `token ${token}`,
@@ -55,7 +55,7 @@ const Dashboard = () => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://10.10.11.29:8000/student/", {
+      const res = await fetch("http://localhost:8000/student/", {
         method: "GET",
         headers: { authorization: `token ${token}` },
       });

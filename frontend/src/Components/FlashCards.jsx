@@ -23,7 +23,7 @@ const FlashCards = () => {
 
   const fetchFlashCards = async () => {
     try {
-      const res = await fetch(`http://10.10.11.29:8000/flashcard/?id=${id}`, {
+      const res = await fetch(`http://localhost:8000/flashcard/?id=${id}`, {
         method: "GET",
         headers: {
           authorization: `token ${token}`,

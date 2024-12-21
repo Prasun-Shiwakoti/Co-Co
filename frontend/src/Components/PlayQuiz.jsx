@@ -28,7 +28,7 @@ const PlayQuiz = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://10.10.11.29:8000/llm/generate_quiz/?id=${id}`,
+        `http://localhost:8000/llm/generate_quiz/?id=${id}`,
         {
           method: "GET",
           headers: { authorization: `token ${token}` },
@@ -60,7 +60,7 @@ const PlayQuiz = () => {
     setResultsSent(true);
     console.log("Sending quiz results...");
     try {
-      const res = await fetch("http://10.10.11.29:8000/quiz_report/", {
+      const res = await fetch("http://localhost:8000/quiz_report/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

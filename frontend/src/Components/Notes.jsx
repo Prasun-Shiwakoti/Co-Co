@@ -16,7 +16,7 @@ const Notes = () => {
   const fetchNotesList = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://10.10.11.29:8000/note/", {
+      const res = await fetch("http://localhost:8000/note/", {
         method: "GET",
         headers: { authorization: `token ${token}` },
       });

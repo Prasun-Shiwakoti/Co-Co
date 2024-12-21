@@ -14,7 +14,7 @@ const Chatbot = ({ close, subjects }) => {
   const handleMessageSend = async () => {
     console.log(messages);
     setMessages(prev => [...prev, { sender: "user", text: input }]);
-    const res = await fetch('http://10.10.11.29:8000/llm/generate_chat/', {
+    const res = await fetch('http://localhost:8000/llm/generate_chat/', {
       method: 'POST',
       headers: { "authorization": `token ${token}`, "Content-Type": "application/json", },
       body: JSON.stringify({ prompt: input, id: selectedId })
